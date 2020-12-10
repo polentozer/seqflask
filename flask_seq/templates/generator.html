@@ -1,36 +1,78 @@
 {% extends "layout.html" %}
 {% block content %}
-  <h1>GENERATOR page</h1>
+  <h1>ULTRA SUPER DNA GENERATOR</h1>
+  <h3>FREE!!! SCONTO 100%!!</h3>
   <div class="content-section">
     <form method="POST" action="">
       {{ form.hidden_tag() }}
       <fieldset class="form-group">
-        <legend class="border-bottom mb-4">Input DNA Sequence</legend>
+        <legend class="border-bottom mb-4">State your desires!</legend>
         <div class="form-group">
           {{ form.sequence_name.label(class="form-control-label") }}
-          {{ form.sequence_name(class="form-control form-control-lg") }}
+          {{ form.sequence_name(class="form-control form-control-sm") }}
         </div>
-        <div class="form-group">
-          {{ form.sequence_length.label(class="form-control-label") }}
-          {% if form.sequence_length.errors %}
-            {{ form.sequence_length(class="form-control form-control-lg is-invalid") }}
-            <div class="invalid-feedback">
-              {% for error in form.sequence_length.errors %}
-                <span>{{ error }}</span>
-              {% endfor %}
-            </div>
-          {% else %}
-            {{ form.sequence_length(class="form-control form-control-lg") }}
-          {% endif %}
+        <div class="form-group row">
+          <div class="col-sm-4">
+            {{ form.sequence_length.label(class="form-control-label") }}
+            {% if form.sequence_length.errors %}
+              {{ form.sequence_length(class="form-control form-control-sm is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.sequence_length.errors %}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              {{ form.sequence_length(class="form-control form-control-sm") }}
+            {% endif %}
+          </div>
+          <div class="col-sm-4">
+            {{ form.max_gc_stretch.label(class="form-control-label") }}
+            {% if form.max_gc_stretch.errors %}
+              {{ form.max_gc_stretch(class="form-control form-control-sm is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.max_gc_stretch.errors %}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+            {{ form.max_gc_stretch(class="form-control form-control-sm") }}
+            {% endif %}
+          </div>
+          <div class="col-sm-4">
+            {{ form.homopolymer.label(class="form-control-label") }}
+            {% if form.homopolymer.errors %}
+              {{ form.homopolymer(class="form-control form-control-sm is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.homopolymer.errors %}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+            {{ form.homopolymer(class="form-control form-control-sm") }}
+            {% endif %}
+          </div>
         </div>
         <div class="form-check">
-            {{ form.protein(class="form-check-input") }}
-            {{ form.protein.label(class="form-check-label") }}
+          {{ form.golden_gate(class="form-check-input") }}
+          {{ form.golden_gate.label(class="form-check-label") }}
         </div>
       </fieldset>
       <div class="form-group">
         {{ form.submit(class="btn btn-outline-info") }}
       </div>
     </form>
+    {% if seq %}
+      <div>
+        <div class='content-section'>
+          <h2>FASTA OUTPUT</h2>
+          <div class='text-monospace text-break'>
+            <p>
+              >{{ form.sequence_name.data }} <br>
+              {{ seq }}
+            </p>
+          </div>
+        </div>
+      </div>
+    {% endif %}
   </div>
 {% endblock content %}
