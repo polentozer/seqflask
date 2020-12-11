@@ -106,7 +106,7 @@ def dna():
 def protein():
     form = proteinSequenceForm()
     if form.validate_on_submit():
-        JOB_ID = form.job_name.data  # TODO: make this unique per job and make db to track settings
+        # job_id  # TODO: make this unique per job and make a db to track settings
         CODON_TABLE = load_codon_table(taxonomy_id=form.target_organism.data)
         input_sequences = [Protein(rec[0], rec[1]) for rec in fasta_parser(form.protein_sequence.data)]
 
