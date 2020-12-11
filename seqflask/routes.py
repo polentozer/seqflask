@@ -1,9 +1,9 @@
 import os
 from flask import render_template, url_for, flash, redirect
-from flask_seq import app
-from flask_seq.modules import Protein, Nucleotide
-from flask_seq.forms import nucleotideSequenceForm, proteinSequenceForm, generatorForm
-from flask_seq.util import random_dna, load_codon_table, fasta_parser
+from seqflask import app
+from seqflask.modules import Protein, Nucleotide
+from seqflask.forms import nucleotideSequenceForm, proteinSequenceForm, generatorForm
+from seqflask.util import random_dna, load_codon_table, fasta_parser
 
 PLOT_DIR = os.path.join(os.path.join(os.getcwd(), f'flask_seq/static/images/'))
 

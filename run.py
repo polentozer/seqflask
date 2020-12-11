@@ -1,4 +1,4 @@
-from flask_seq import app
+from seqflask import app
 
 if __name__ == '__main__':
     app.run(debug=True)

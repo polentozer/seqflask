@@ -3,8 +3,8 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, BooleanField, IntegerField, SelectField, RadioField
 from wtforms.validators import DataRequired, Length, NumberRange, Optional
 from wtforms.widgets import TextArea
-from flask_seq.util import load_all_species
-from flask_seq.seqtools_config import ORGANISM_CHOICES, DNA_OPERATIONS, GGA_PART_TYPES
+from seqflask.util import load_all_species
+from seqflask.seqtools_config import ORGANISM_CHOICES, DNA_OPERATIONS, GGA_PART_TYPES
 
 
 class nucleotideSequenceForm(FlaskForm):

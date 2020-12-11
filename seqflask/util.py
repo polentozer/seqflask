@@ -1,7 +1,7 @@
 import os
 from pandas import DataFrame
 from random import choice, random
-from flask_seq.seqtools_config import COMMON_SPECIES, CODONS, STANDARD_GENETIC_CODE
+from seqflask.seqtools_config import COMMON_SPECIES, CODONS, STANDARD_GENETIC_CODE
 
 
 CODON_USAGE_DB = f'{os.path.dirname(__file__)}/data/codon_usage.spsum'

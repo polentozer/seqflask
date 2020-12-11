@@ -4,8 +4,8 @@ import pandas
 # import logging
 import matplotlib.pyplot as plt
 from flask import url_for
-from flask_seq.seqtools_config import GGA_PART_TYPES, COMMON_SPECIES, RENZ_SHORT
-from flask_seq.util import sequence_match, get_codon, DEFAULT_TABLE
+from seqflask.seqtools_config import GGA_PART_TYPES, COMMON_SPECIES, RENZ_SHORT
+from seqflask.util import sequence_match, get_codon, DEFAULT_TABLE
 
 # logger = logging.getLogger(__name__)
 plt.switch_backend('Agg')
