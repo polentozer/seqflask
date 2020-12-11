@@ -6,25 +6,20 @@ COMMON_SPECIES = {
     'bsub': '1432',
     'yali': '284591'}
 
-COMMON_NAMES = {
-    'ecoli': 'Escherichia coli',
-    'yeast': 'Saccharomyces cerevisiae',
-    'human': 'Homo sapiens',
-    'bsub': 'Bacilus subtilis',
-    'yali': 'Yarrowia lipolytica'}
+ORGANISM_CHOICES = [
+    ('83333', 'Escherichia coli K12'),
+    ('4932', 'Saccharomyces cerevisiae'),
+    ('284591', 'Yarrowia lipolytica CLIB122'),
+    ('1423', 'Bacilus subtilis'),
+    ('1471', 'Bacillus methanolicus'),
+    ('9606', 'Homo sapiens'),
+    ('1927', 'Streptomyces rimosus')]
 
-ORGANISM_CHOICES = [('83333', 'Escherichia coli'),
-                    ('4932', 'Saccharomyces cerevisiae'),
-                    ('9606', 'Homo sapiens'),
-                    ('1432', 'Bacilus subtilis'),
-                    ('284591', 'Yarrowia lipolytica')]
-
-SOURCE_ORGANISMS = [('0000', '---')] + ORGANISM_CHOICES
-
-OPERATIONS = [('translate', 'Translate'),
-              ('optimize', 'Optimize'),
-              ('harmonize', 'Harmonize'),
-              ('goldengate', 'Remove GoldenGate cutsites')]
+DNA_OPERATIONS = [
+    ('translate', 'Translate'),
+    ('optimize', 'Optimize'),
+    ('harmonize', 'Harmonize'),
+    ('goldengate', 'Remove GoldenGate cutsites')]
 
 CODONS = [
     'CGA', 'CGC', 'CGG', 'CGT', 'AGA', 'AGG', 'CTA', 'CTC',
@@ -54,159 +49,86 @@ RENZ_SHORT = [
     'GCGGCCGC']
 
 GGA_PART_TYPES = {
-    'type1': {
+    '1': {
         'prefix': 'GCATCGTCTCATCGGAGTCGGTCTCACCCT',
         'suffix': 'AACGAGAGACCAGCAGACCAGAGACGGCAT',
         'info': 'Left side assembly connector'
     },
-    'type2': {
+    '2': {
         'prefix': 'GCATCGTCTCATCGGTCTCAAACG',
         'suffix': 'TATGAGAGACCTGAGACGGCAT',
         'info': 'Promotor'
     },
-    'type3': {
+    '3t': {
         'prefix': 'GCATCGTCTCATCGGTCTCAT',
         'suffix': 'ATCCAGAGACCTGAGACGGCAT',
-        'info': 'CDS'
+        'info': 'CDS (with stop)'
     },
-    'type3a': {
+    '3a': {
         'prefix': 'GCATCGTCTCATCGGTCTCAT',
         'suffix': 'GGTTCTAGAGACCTGAGACGGCAT',
         'info': 'N-terminal CDS'
     },
-    'type3b': {
+    '3b': {
         'prefix': 'GCATCGTCTCATCGGTCTCATTCT',
         'suffix': 'GGATCCAGAGACCTGAGACGGCAT',
         'info': 'CDS'
     },
-    'type3t': {
+    '3': {
         'prefix': 'GCATCGTCTCATCGGTCTCAT',
         'suffix': 'GGATCCTGAGACCTGAGACGGCAT',
         'info': 'True type3 CDS (GS linker, no STOP)'
     },
-    'type4': {
+    '4': {
         'prefix': 'GCATCGTCTCATCGGTCTCAATCC',
         'suffix': 'GCTGAGAGACCTGAGACGGCAT',
         'info': 'Terminator'
     },
-    'type4a': {
+    '4a': {
         'prefix': 'GCATCGTCTCATCGGTCTCAATCC',
         'suffix': 'TGGCAGAGACCTGAGACGGCAT',
         'info': 'C-terminal CDS'
     },
-    'type4b': {
+    '4b': {
         'prefix': 'GCATCGTCTCATCGGTCTCATGGC',
         'suffix': 'GCTGAGAGACCTGAGACGGCAT',
         'info': 'Terminator'
     },
-    'type5': {
+    '5': {
         'prefix': 'GCATCGTCTCATCGGAGTCGGTCTCAGCTG',
         'suffix': 'TACAAGAGACCAGCAGACCAGAGACGGCAT',
         'info': 'Right side assembly connector'
     },
-    'type6': {
+    '6': {
         'prefix': 'GCATCGTCTCATCGGTCTCATACA',
         'suffix': 'GAGTAGAGACCTGAGACGGCAT',
         'info': 'Yeast marker'
     },
-    'type7': {
+    '7': {
         'prefix': 'GCATCGTCTCATCGGTCTCAGAGT',
         'suffix': 'CCGAAGAGACCTGAGACGGCAT',
         'info': "3'-homology or yeast origin"
     },
-    'type8': {
+    '8': {
         'prefix': 'GCATCGTCTCATCGGTCTCACCGA',
         'suffix': 'CCCTAGAGACCAGAGACGGCAT',
         'info': 'E. coli marker and origin'
     },
-    'type8a': {
+    '8a': {
         'prefix': 'GCATCGTCTCATCGGTCTCACCGA',
         'suffix': 'CAATAGAGACCAGAGACGGCAT',
         'info': 'E. coli marker and origin'
     },
-    'type8b': {
+    '8b': {
         'prefix': 'GCATCGTCTCATCGGTCTCACAAT',
         'suffix': 'CCCTAGAGACCAGAGACGGCAT',
         'info': "5'-homology"
     },
-    'typeX': {
+    'X': {
         'prefix': 'GCATCGTCTCATCGGTCTCANNNN',
         'suffix': 'NNNNAGAGACCAGAGACGGCAT',
         'info': 'Custom parts'
     }
-}
-
-RESTRICTION_ENZYMES = {
-    'BsaI': {
-        'substrate': 'DNA',
-        'recognition': 'GGTCTC',
-        'jump': 1,
-        'overhang': 4,
-        'incubation_temperature': 37,
-        'overhang_type': '5`',
-        'methylation_sensitivity': {
-            'Dam': False,
-            'Dcm': True,
-            'EcoKI': False
-        },
-        'description': 'Type 2 restriction enzyme used in modular cloning or MoClo for short. Sticky ends from different BsaI sites may not be compatible. BsaI can be used between 37 and 50 °C.'
-    },
-    'BsmBI': {
-        'substrate': 'DNA',
-        'recognition': 'CGTCTC',
-        'jump': 1,
-        'overhang': 4,
-        'incubation_temperature': 55,
-        'overhang_type': '5`',
-        'methylation_sensitivity': {
-            'Dam': False,
-            'Dcm': False,
-            'EcoKI': False
-        },
-        'description': 'Type 2 restriction enzyme used in modular cloning or MoClo for short. Sticky ends from different BsmBI sites may not be compatible.'
-    },
-    'NotI': {
-        'substrate': 'DNA',
-        'recognition': 'GCGGCCGC',
-        'jump': 0,
-        'overhang': 4,
-        'incubation_temperature': 37,
-        'overhang_type': '5`',
-        'methylation_sensitivity': {
-            'Dam': False,
-            'Dcm': False,
-            'EcoKI': False
-        },
-        'description': 'Classic restriction enzyme commonly used in cloning. This particular enzyme has has very rare recognition site.'
-    },
-    # 'BpiI': {
-    #     'substrate': 'DNA',
-    #     'recognition': 'GAAGAC',
-    #     'jump': 2,
-    #     'overhang': 4,
-    #     'incubation_temperature': 37,
-    #     'overhang_type': '5`',
-    #     'methylation_sensitivity': {
-    #         'Dam': False,
-    #         'Dcm': False,
-    #         'EcoKI': False
-    #     },
-    #     'description': 'Type 2 restriction enzyme used in modular cloning or MoClo for short. Sticky ends from different BsmBI sites may not be compatible.'
-    # },
-    # 'EcoRI': {
-    #     'substrate': 'DNA',
-    #     'recognition': 'GAATTC',
-    #     'jump': 0,
-    #     'overhang': 4,
-    #     'incubation_temperature': 37,
-    #     'overhang_type': '5`',
-    #     'methylation_sensitivity': {
-    #         'Dam': False,
-    #         'Dcm': False,
-    #         'EcoKI': False
-    #     },
-    #     'description': 'Classic restriction enzyme commonly used in cloning.'
-    # }
 }
 
 LOGGING_CONFIG = {

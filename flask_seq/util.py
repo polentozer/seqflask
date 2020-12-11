@@ -3,8 +3,39 @@ from pandas import DataFrame
 from random import choice, random
 from flask_seq.seqtools_config import COMMON_SPECIES, CODONS, STANDARD_GENETIC_CODE
 
+
 CODON_USAGE_DB = f'{os.path.dirname(__file__)}/data/codon_usage.spsum'
 CUSTOM_CODON_USAGE_DB = f'{os.path.dirname(__file__)}/data/custom_table.spsum'
+
+
+def fasta_parser(handle):
+    '''Parser for fasta sequences.'''
+    stream = handle.split('\n')
+    sequences = []
+
+    for line in stream:
+        if line[0] == '>':
+            seq_name = line[1:].strip()
+            break
+    else:
+        return sequences
+
+    temp = []
+    for line in stream:
+        if line[0] == '>':
+            if temp:
+                sequences.append((seq_name, "".join(temp)))
+            seq_name = line[1:].strip()
+            temp = []
+            continue
+        else:
+            temp.append(line.strip().upper())
+    else:
+        sequences.append((seq_name, "".join(temp)))
+    
+    # logger.info(f'Input {len(sequences)} sequences...')
+
+    return sequences
 
 
 def sequence_match(string, search):
@@ -13,21 +44,28 @@ def sequence_match(string, search):
     return not bool(search(string))
 
 
-def load_codon_table(species=None, taxonomy_id=None, custom=False, return_name=False):
+def load_all_species(handle=CODON_USAGE_DB):
+    lib = []
+    with open(handle) as h:
+        for header in h:
+            h.readline()
+            taxid, species = header.strip().split(':')[:2]
+            lib.append((taxid, species))
+        
+        return lib
+
+
+def load_codon_table(taxonomy_id=None, custom=False, return_name=False):
     '''Load a codon table based on the organism's species ID'''
     # logger.debug(f'load_codon_table(species={species}, taxonomy_id={taxonomy_id}, custom={custom})')
-
-    if species in COMMON_SPECIES:
-        taxonomy_id = COMMON_SPECIES[species]
-
     if custom:
-        codon_usage = CUSTOM_CODON_USAGE_DB
+        handle = CUSTOM_CODON_USAGE_DB
     else:
-        codon_usage = CODON_USAGE_DB
+        handle = CODON_USAGE_DB
 
-    with open(codon_usage) as cu:
-        for header in cu:
-            codon_counts = cu.readline()
+    with open(handle) as h:
+        for header in h:
+            codon_counts = h.readline()
 
             taxid, species = header.strip().split(':')[:2]
 
@@ -76,8 +114,6 @@ def codon_table_10plus(table):
     table = table.groupby(level=0).transform(lambda x: x / x.sum())
 
     return table
-
-
 
 
 def random_dna(length, homopolymer=10, gc_stretch=20, max_gc_ratio=0.3, restriction=False):
@@ -161,3 +197,6 @@ def random_dna(length, homopolymer=10, gc_stretch=20, max_gc_ratio=0.3, restrict
             candidates.pop(0)
 
     return ''.join(confirmed)
+
+
+DEFAULT_TABLE = load_codon_table(taxonomy_id='284591')

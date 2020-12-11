@@ -3,13 +3,12 @@ import os
 import pandas
 # import logging
 import matplotlib.pyplot as plt
+from flask import url_for
 from flask_seq.seqtools_config import GGA_PART_TYPES, COMMON_SPECIES, RENZ_SHORT
-from flask_seq.util import sequence_match, load_codon_table, get_codon, codon_table_10plus
-
+from flask_seq.util import sequence_match, get_codon, DEFAULT_TABLE
 
 # logger = logging.getLogger(__name__)
-
-DEFAULT_TABLE = load_codon_table(species='yali')
+plt.switch_backend('Agg')
 
 class Sequence:
     '''Biological sequence object'''
@@ -27,9 +26,6 @@ class Sequence:
 
     def __len__(self):
         return len(self.sequence)
-
-    def __add__(self, other):
-        return Sequence('concat', self.sequence + other.sequence)
     
     def __eq__(self, other):
         return self.sequence == other.sequence
@@ -278,20 +274,21 @@ class Nucleotide(Sequence):
         # self.logger.debug('Optimizing codon usage...')
         if not self.basic_cds:
             return self
+
         seq_id = self.sequence_id
         optimized = self.translate(table=table).reverse_translate(table=table, maximum=maximum)
 
         return Nucleotide(f'{seq_id}|OPT', optimized.sequence)
 
-    def make_part(self, part_type='3t', part_options=GGA_PART_TYPES):
+    def make_part(self, part_type='3t', part_options=GGA_PART_TYPES, table=DEFAULT_TABLE):
         '''Make DNA part out of a given sequence'''
         # self.logger.debug('Making parts...')
         seq_id = f'part_gge{part_type}_{self.sequence_id}'
-        part = part_options[f'type{part_type}']
-        if part_type in ('3t', '3a', '3b') and self.translate(check=True).sequence[-1] == '*':
-            sequence = f'{part["prefix"]}{self.sequence[:-3]}{part["suffix"]}'
+        part = part_options[part_type]
+        if part_type in ('3', '3a', '3b') and self.translate(check=True).sequence[-1] == '*':
+            sequence = f'{part["prefix"]}{self.remove_cutsites(table=table).sequence[:-3]}{part["suffix"]}'
         else:
-            sequence = f'{part["prefix"]}{self.sequence}{part["suffix"]}'
+            sequence = f'{part["prefix"]}{self.remove_cutsites(table=table).sequence}{part["suffix"]}'
 
         return Nucleotide(seq_id, sequence)
     
@@ -342,66 +339,69 @@ class Nucleotide(Sequence):
                     return self
         
         return Nucleotide(f'{seq_id}|HARM{mode}', ''.join(optimized))
+
     
-    def data_fraction(self, table=DEFAULT_TABLE, window=16):
-        '''Calculates average window codon fraction for a given sequence and codon usage table.
-        Returns a list of window-fraction values, which can be used for analysis or ploted.'''
-        # self.logger.debug(
-        #     f'Calculating fraction values for {self.sequence_id} in {window} codon window...')
-
-        values, data = [], []
-        codons = table.reset_index().set_index(['Triplet'])
-
-        for triplet in self.make_triplets():
-            values.append(codons.loc[triplet]['Fraction'])
-
-        for n in range(len(values)+1-window):
-            data.append(sum([f for f in values[n:n+window]]) / window)
-
-        return data
-    
-    def data_minmax(self, table=DEFAULT_TABLE, window=16):
-        '''Calculates the %MinMax values for a given sequence and codon usage table.
-        Returns a list of %MinMax values, which can be used for analysis or ploted.
-
-        Reference:
-        Clarke TF IV, Clark PL (2008) Rare Codons Cluster. PLoS ONE 3(10): e3412.
-        doi:10.1371/journal.pone.0003412'''
-        # self.logger.debug(
-        #     f'Calculating %MinMax values for {self.sequence_id} in {window} codon window...')
-
-        tri_table = table.reset_index(level='Triplet')
-        values, data = [], []
-
-        for triplet in self.make_triplets():
-            freq = tri_table[tri_table['Triplet'] == triplet]['Frequency'][0]
-            codons = table.loc[tri_table[tri_table['Triplet'] == triplet].index[0]]
-
-            values.append((freq,
-                           max(codons.Frequency),
-                           min(codons.Frequency),
-                           sum(codons.Frequency)/len(codons)))
-
-        for n in range(len(values)+1-window):
-            current = values[n:n+window]
-            actual = sum([f[0] for f in current]) / window
-            maximum = sum([f[1] for f in current]) / window
-            minimum = sum([f[2] for f in current]) / window
-            average = sum([f[3] for f in current]) / window
-
-            maxi = ((actual - average) / (maximum - average)) * 100
-            mini = ((average - actual) / (average - minimum)) * 100
-
-            if maxi > 0:
-                data.append(maxi)
-            elif mini > 0:
-                data.append(-mini)
-        
-        return data
-    
-    def graph_codon_usage(self, window=16, other=None, other_id=None, table=DEFAULT_TABLE, 
-                          minmax=True, target_organism='Yarrowia lipolytica', file_output=False):
+    def plot_codon_usage(self, window=16, other=None, other_id=None, table=DEFAULT_TABLE, 
+                          minmax=True, target_organism='Yarrowia lipolytica',
+                          table_other=DEFAULT_TABLE, n=0):
         '''Graph codon frequency of a given gene'''
+
+        def data_fraction(self, table=table, window=window):
+            '''Calculates average window codon fraction for a given sequence and codon usage table.
+            Returns a list of window-fraction values, which can be used for analysis or ploted.'''
+            # self.logger.debug(
+            #     f'Calculating fraction values for {self.sequence_id} in {window} codon window...')
+
+            values, data = [], []
+            codons = table.reset_index().set_index(['Triplet'])
+
+            for triplet in self.make_triplets():
+                values.append(codons.loc[triplet]['Fraction'])
+
+            for n in range(len(values)+1-window):
+                data.append(sum([f for f in values[n:n+window]]) / window)
+
+            return data
+    
+        def data_minmax(self, table=table, window=window):
+            '''Calculates the %MinMax values for a given sequence and codon usage table.
+            Returns a list of %MinMax values, which can be used for analysis or ploted.
+
+            Reference:
+            Clarke TF IV, Clark PL (2008) Rare Codons Cluster. PLoS ONE 3(10): e3412.
+            doi:10.1371/journal.pone.0003412'''
+            # self.logger.debug(
+            #     f'Calculating %MinMax values for {self.sequence_id} in {window} codon window...')
+
+            tri_table = table.reset_index(level='Triplet')
+            values, data = [], []
+
+            for triplet in self.make_triplets():
+                freq = tri_table[tri_table['Triplet'] == triplet]['Frequency'][0]
+                codons = table.loc[tri_table[tri_table['Triplet'] == triplet].index[0]]
+
+                values.append((freq,
+                            max(codons.Frequency),
+                            min(codons.Frequency),
+                            sum(codons.Frequency)/len(codons)))
+
+            for n in range(len(values)+1-window):
+                current = values[n:n+window]
+                actual = sum([f[0] for f in current]) / window
+                maximum = sum([f[1] for f in current]) / window
+                minimum = sum([f[2] for f in current]) / window
+                average = sum([f[3] for f in current]) / window
+
+                maxi = ((actual - average) / (maximum - average)) * 100
+                mini = ((average - actual) / (average - minimum)) * 100
+
+                if maxi > 0:
+                    data.append(maxi)
+                elif mini > 0:
+                    data.append(-mini)
+            
+            return data
+
 
         if not self.basic_cds:
             # self.logger.error('Graphing codon usage unsuccessful, sequence is not a CDS!')
@@ -410,26 +410,20 @@ class Nucleotide(Sequence):
         if isinstance(other, Nucleotide) and other.basic_cds:
             # self.logger.debug(
             #     f'calculating data for {self.sequence_id} and {other.sequence_id}...')
-            if other_id:
-                if other_id in COMMON_SPECIES:
-                    other_id = COMMON_SPECIES[other_id]
-                table_other, species = load_codon_table(taxonomy_id=other_id, return_name=True)
-            else:
-                table_other = table
             if minmax:
                 data = [x for x in zip(
-                    self.data_minmax(table=table, window=window),
-                    other.data_minmax(table=table_other, window=window))]
+                    data_minmax(self=self, table=table, window=window),
+                    data_minmax(self=other, table=table_other, window=window))]
             else:
                 data = [x for x in zip(
-                    self.data_fraction(table=table, window=window),
-                    other.data_fraction(table=table_other, window=window))]
+                    data_fraction(self=self, table=table, window=window),
+                    data_fraction(self=other, table=table_other, window=window))]
         else:
             # self.logger.debug(f'calculating data for {self.sequence_id}...')
             if minmax:
-                data = self.data_minmax(table=table, window=window)
+                data = data_minmax(self=self, table=table, window=window)
             else:
-                data = self.data_fraction(table=table, window=window)
+                data = data_fraction(self=self, table=table, window=window)
 
         x = range(len(data))
         zeros = [0 for i in x]
@@ -459,7 +453,7 @@ class Nucleotide(Sequence):
                 ax0.set_ylabel('Fraction')
 
             if other_id:
-                target_organism = species
+                target_organism = other_id
 
             ax1.plot(x, y2, alpha=0.8, linewidth=.5)
             if len(target_organism.split()) > 1:
@@ -502,16 +496,9 @@ class Nucleotide(Sequence):
         plt.xlim(-4, len(data)+4)
         plt.xlabel('Codon')
 
-        if not file_output:
-            plt.show()
-        else:
-            n = 0
-            fig_name = 'seqtools-graph.png'
-            while os.path.isfile(os.path.join(os.path.join(os.getcwd(), fig_name))):
-                fig_name = f'seqtools-graph-{n}.png'
-                n += 1
-            plt.savefig(os.path.join(os.path.join(os.getcwd(), fig_name)))
-            # self.logger.info(
-            #     f'Codon usage plot for sequence {self.sequence_id} saved to {fig_name}')
+        p = os.path.join(os.path.join(os.getcwd(), f'flask_seq/static/images/plot{n+1}.png'))
+        plt.savefig(p)
+        # self.logger.info(
+        #     f'Codon usage plot for sequence {self.sequence_id} saved: {p}')
 
-        return
+        return 0

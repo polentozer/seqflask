@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-  <h1>HOME-TOOLS page</h1>
+  <h1>DNA-TOOLS page</h1>
   <div class="content-section">
     <form method="POST" action="">
       {{ form.hidden_tag() }}
@@ -8,7 +8,7 @@
         <legend class="border-bottom mb-4">Input DNA Sequence</legend>
         <div class="form-group">
           {{ form.job_name.label(class="form-control-label") }}
-          {{ form.job_name(class="form-control form-control-md") }}
+          {{ form.job_name(class="form-control form-control-sm") }}
         </div>
         <div class="form-group">
           {{ form.dna_sequence.label(class="form-control-label") }}
@@ -40,16 +40,20 @@
           {{ form.source_organism.label(class="form-control-label") }}
           {{ form.source_organism(class="form-control form-control-sm") }}
         </div>
+        <div class="form-group">
+          {{ form.golden_gate.label(class="form-control-label") }}
+          {{ form.golden_gate(class="form-control form-control-sm") }}
+        </div>
         <div class="form-group pt-2">
           <label class="form-control-label">Extra options</label><br>
           <div class="form-check-inline">
             <div class="form-group">
-              {{ form.golden_gate(class="form-check-input") }}
-              {{ form.golden_gate.label(class="form-check-label") }}
-            </div>
-            <div class="form-group pl-5">
               {{ form.maximize(class="form-check-input") }}
               {{ form.maximize.label(class="form-check-label") }}
+            </div>
+            <div class="form-group pl-5">
+              {{ form.plot(class="form-check-input") }}
+              {{ form.plot.label(class="form-check-label") }}
             </div>
           </div>
         </div>
@@ -60,14 +64,20 @@
     </form>
     {% if modified %}
       <div>
-        <div class='content-section'>
-          <h2>FASTA OUTPUT</h2>
-          <div class='text-monospace text-break'>
+        <h2 class="pt-4">OUTPUT</h2>
+        <div class='content-section text-break'>
+          <h4 class="pt-3">FASTA SEQUENCES</h4>
+          <div class='text-monospace'>
             {% for rec in modified %}
-            <p>
-              >{{ rec.sequence_id }}<br>
-              {{ rec.sequence }}<br>
-            </p>
+              <div>
+                {% if draw_plot %}
+                  <img src="{{ url_for('static', filename='/images/plot') }}{{ loop.index }}.png" alt="plot" height="auto" width="100%">
+                {% endif %}
+                <p>
+                  >{{ rec.sequence_id }}<br>
+                  {{ rec.sequence }}<br>
+                </p>
+              </div>
             {% endfor %}
           </div>
         </div>
