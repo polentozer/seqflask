@@ -496,7 +496,7 @@ class Nucleotide(Sequence):
         plt.xlim(-4, len(data)+4)
         plt.xlabel('Codon')
 
-        p = os.path.join(os.path.join(os.getcwd(), f'flask_seq/static/images/plot{n+1}.png'))
+        p = os.path.join(os.path.join(os.getcwd(), f'seqflask/static/images/plot{n+1}.png'))
         plt.savefig(p)
         # self.logger.info(
         #     f'Codon usage plot for sequence {self.sequence_id} saved: {p}')

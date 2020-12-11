@@ -5,7 +5,7 @@ from seqflask.modules import Protein, Nucleotide
 from seqflask.forms import nucleotideSequenceForm, proteinSequenceForm, generatorForm
 from seqflask.util import random_dna, load_codon_table, fasta_parser
 
-PLOT_DIR = os.path.join(os.path.join(os.getcwd(), f'flask_seq/static/images/'))
+PLOT_DIR = os.path.join(os.path.join(os.getcwd(), f'seqflask/static/images/'))
 
 @app.route("/")
 def home():
