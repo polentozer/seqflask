@@ -19,7 +19,7 @@ DNA_OPERATIONS = [
     ('translate', 'Translate'),
     ('optimize', 'Optimize'),
     ('harmonize', 'Harmonize'),
-    ('goldengate', 'Remove GoldenGate cutsites')]
+    ('remove', 'Remove GoldenGate cutsites')]
 
 CODONS = [
     'CGA', 'CGC', 'CGG', 'CGT', 'AGA', 'AGG', 'CTA', 'CTC',

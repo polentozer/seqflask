@@ -61,18 +61,6 @@
         {{ form.submit(class="btn btn-outline-info") }}
       </div>
     </form>
-    {% if seq %}
-      <div>
-        <div class='content-section'>
-          <h2>FASTA OUTPUT</h2>
-          <div class='text-monospace text-break'>
-            <p>
-              >{{ form.sequence_name.data }} <br>
-              {{ seq }}
-            </p>
-          </div>
-        </div>
-      </div>
-    {% endif %}
+    {% include "output.html" %}
   </div>
 {% endblock content %}

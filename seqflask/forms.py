@@ -30,8 +30,8 @@ class nucleotideSequenceForm(FlaskForm):
         default='optimize')
     golden_gate = SelectField(
         'Add GoldenGate prefix/sufix for part',
-        choices=[(0, '---')] + [(p, p) for p in GGA_PART_TYPES.keys()],
-        default=0,
+        choices=[('0000', '---')] + [(p, p) for p in GGA_PART_TYPES.keys()],
+        default='0000',
         validators=[Optional()])
     maximize = BooleanField(
         'Maximize',
@@ -41,34 +41,36 @@ class nucleotideSequenceForm(FlaskForm):
         validators=[Optional()])
     submit = SubmitField('Submit')
 
-    # OPTIONS: manipulate
-    # PROPERTIES: target organism (default=yali), source organism (optional)
-    # MANIPULATIONS: optimize, harmonize, translate, prepare goldengate parts
-    # EXTRA-FLAGS: maximize, remove-cutsites
-
 
 class proteinSequenceForm(FlaskForm):
+    # TODO: uniprot & fasta validator
     job_name = StringField(
         'Job name',
         validators=[Optional()])
+    uniprot_identifier = StringField(
+        'UNIPROT accession number',
+        validators=[Optional(), Length(min=6, max=10)])
     protein_sequence = StringField(
         'PROTEIN Sequence(s)',
         widget=TextArea(),
-        validators=[DataRequired(), Length(min=1, max=4000)])
+        validators=[Optional(), Length(min=1, max=4000)])
     target_organism = SelectField(
         'Select your target organism',
         choices=ORGANISM_CHOICES, default='284591',
         validators=[DataRequired()])
     golden_gate = SelectField(
         'Prepare GoldenGate part',
-        choices=[(0, '---')] + [(p, p) for p in GGA_PART_TYPES.keys() if '3' in p],
-        default=0,
+        choices=[('0000', '---')] + [(p, p) for p in GGA_PART_TYPES.keys() if '3' in p],
+        default='0000',
         validators=[Optional()])
     reverse = BooleanField(
         '"Reverse-Translate"',
         validators=[Optional()])
     maximize = BooleanField(
         'Maximize',
+        validators=[Optional()])
+    plot = BooleanField(
+        'Draw plots',
         validators=[Optional()])
     submit = SubmitField('Submit')
 
@@ -87,8 +89,8 @@ class generatorForm(FlaskForm):
     homopolymer = IntegerField(
         'Homopolymer length',
         default=10,
-        validators=[DataRequired(), NumberRange(min=3)])
+        validators=[DataRequired(), NumberRange(min=1)])
     golden_gate = BooleanField(
-        'Remove GoldenGate restriction enzymes?',
+        'Remove GoldenGate restriction enzymes',
         validators=[Optional()])
-    submit = SubmitField('ORDER!!')
+    submit = SubmitField('ORDER NOW!!')

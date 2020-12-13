@@ -62,26 +62,6 @@
         {{ form.submit(class="btn btn-outline-info") }}
       </div>
     </form>
-    {% if modified %}
-      <div>
-        <h2 class="pt-4">OUTPUT</h2>
-        <div class='content-section text-break'>
-          <h4 class="pt-3">FASTA SEQUENCES</h4>
-          <div class='text-monospace'>
-            {% for rec in modified %}
-              <div>
-                {% if draw_plot %}
-                  <img src="{{ url_for('static', filename='/images/plot') }}{{ loop.index }}.png" alt="plot" height="auto" width="100%">
-                {% endif %}
-                <p>
-                  >{{ rec.sequence_id }}<br>
-                  {{ rec.sequence }}<br>
-                </p>
-              </div>
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-    {% endif %}
+    {% include "output.html" %}
   </div>
 {% endblock content %}

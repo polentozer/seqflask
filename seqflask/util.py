@@ -138,7 +138,7 @@ def random_dna(length, homopolymer=10, gc_stretch=20, max_gc_ratio=0.3, restrict
 
     def check_homopolymer(sequence, upper_bound, chars=dna):
         for char in chars:
-            if char * upper_bound in sequence:
+            if char * (upper_bound+1) in sequence:
                 return True
         return False
 

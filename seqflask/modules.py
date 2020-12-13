@@ -80,7 +80,7 @@ class Protein(Sequence):
             name = '|NUC'
             maximum = False
         for amino in self.sequence:
-            if amino == '?':
+            if amino in '?X':
                 dna_sequence.append('NNN')
             else:
                 codons = table.loc[amino]
@@ -286,9 +286,9 @@ class Nucleotide(Sequence):
         seq_id = f'part_gge{part_type}_{self.sequence_id}'
         part = part_options[part_type]
         if part_type in ('3', '3a', '3b') and self.translate(check=True).sequence[-1] == '*':
-            sequence = f'{part["prefix"]}{self.remove_cutsites(table=table).sequence[:-3]}{part["suffix"]}'
+            sequence = f'{part["prefix"]}{self.sequence[:-3]}{part["suffix"]}'
         else:
-            sequence = f'{part["prefix"]}{self.remove_cutsites(table=table).sequence}{part["suffix"]}'
+            sequence = f'{part["prefix"]}{self.sequence}{part["suffix"]}'
 
         return Nucleotide(seq_id, sequence)
     
