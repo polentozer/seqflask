@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 from flask import url_for
 from seqflask.utils import sequence_match, get_codon, GlobalVariables, make_plot_path
 
-# logger = logging.getLogger(__name__)
 plt.switch_backend("Agg")
 
 
@@ -15,7 +14,6 @@ class Sequence:
     def __init__(self, sequence_id, sequence, logger=None):
         self.sequence_id = sequence_id
         self.sequence = sequence.upper()
-        # self.logger = logger or logging.getLogger(__name__)
 
     def __repr__(self):
         return f"Sequence: >{self.sequence_id} {self.sequence}"
@@ -34,7 +32,6 @@ class Sequence:
         return f">{self.sequence_id}\n\r{self.sequence}\n"
 
     def kmer_analysis(self, threshold, length=8):
-        # self.logger.debug('Calculating k-mer occurrence...')
         kmers = {}
         for i in range(len(self) - length + 1):
             kmer = self.sequence[i : i + length]
@@ -74,7 +71,6 @@ class Protein(Sequence):
 
     def reverse_translate(self, table, maximum=False):
         """Returns optimized DNA sequence"""
-        # self.logger.debug('Making reverse translation...')
         dna_sequence = list()
         if maximum:
             name = "|NUC-MAX"
@@ -118,15 +114,13 @@ class Nucleotide(Sequence):
     @property
     def basic_cds(self):
         """Returns True if sequence is CDS or false if its not"""
-        # self.logger.debug('Checking basic CDS...')
         if self.sequence[:3] == "ATG" and len(self) % 3 == 0:
             return True
-        # self.logger.error(f'{self.sequence_id} is not a CDS')
         return False
 
     def check_cds(self):
         """Checks CDS"""
-        # self.logger.debug('Checking CDS...')
+
         def triplet(self):
             return len(self) % 3 == 0
 
@@ -145,7 +139,6 @@ class Nucleotide(Sequence):
         result = True
         for test in tests:
             if not test(self):
-                # self.logger.error(f'{self.sequence_id} failed on {test.__name__}')
                 result = False
 
         return result
@@ -153,7 +146,6 @@ class Nucleotide(Sequence):
     @property
     def reverse_complement(self):
         """Returns reverse complement of given DNA sequence"""
-        # self.logger.debug('Making reverse complement...')
         return Nucleotide(
             f"{self.sequence_id}|REVC",
             self.sequence.translate(str.maketrans("ACGT", "TGCA"))[::-1],
@@ -161,7 +153,6 @@ class Nucleotide(Sequence):
 
     def make_triplets(self):
         """Makes list of chunks 3 characters long from a sequence"""
-        # self.logger.debug('Making triplets...')
         return [
             self.sequence[start : start + 3]
             for start in range(0, len(self.sequence), 3)
@@ -178,7 +169,6 @@ class Nucleotide(Sequence):
 
         Non-dNA characters (e.g. E, F, J, !, 1, etc) are ignored in this method.
         """
-        # self.logger.debug('Calculating melting temperature...')
         weak = ("A", "T", "W")
         strong = ("C", "G", "S")
         return 2 * sum(map(self.sequence.count, weak)) + 4 * sum(
@@ -193,7 +183,6 @@ class Nucleotide(Sequence):
                 if "FORCED" not in self.sequence_id:
                     return self
                 else:
-                    # self.logger.debug('Continuing with "FORCED"...')
                     pass
         seq_id = self.sequence_id
         translation = list()
@@ -202,48 +191,9 @@ class Nucleotide(Sequence):
             if len(triplet) == 3 and "N" not in triplet:
                 translation.append(table[table["Triplet"] == triplet].index[0])
             else:
-                # self.logger.warning(f'Unknown translation for codon: {triplet}')
                 translation.append("?")
 
         return Protein(f"{seq_id}|PROT", "".join(translation))
-
-    # def check_common_errors(self):
-    # self.logger.debug('Checking common errors on DNA sequence')
-    # self.logger.info(f'Checking common errors in sequence with ID "{self.sequence_id}"...')
-    # for nucleotide in 'ACGT':
-    # self.logger.info(f'Checking "{nucleotide}" homopolymer')
-    # if nucleotide * 11 in self.sequence:
-    # self.logger.warning(
-    #     f'ID "{self.sequence_id}" failed on long "{nucleotide}" homopolymer')
-    # else:
-    #     self.logger.info("pass")
-    # self.logger.info(f'Checking for unknown base pairs')
-    # if 'N' in self.sequence:
-    #     self.logger.warning(
-    #         f'ID "{self.sequence_id}" failed on "N" (unknown base pair) in sequence')
-    # else:
-    #         self.logger.info("pass")
-    # self.logger.info(f'Checking BsaI restriction sites')
-    # if 'GGTCTC' in self.sequence or 'GAGACC' in self.sequence:
-    #     self.logger.warning(f'ID "{self.sequence_id}" failed on BsaI restriction sites')
-    # else:
-    #         self.logger.info("pass")
-    # self.logger.info(f'Checking BsmBI restriction sites')
-    # if 'CGTCTC' in self.sequence or 'GAGACG' in self.sequence:
-    #     self.logger.warning(f'ID "{self.sequence_id}" failed on BsmBI restriction sites')
-    # else:
-    #         self.logger.info("pass")
-    # self.logger.info(f'Checking too short sequence')
-    # if len(self) < 10:
-    #     self.logger.warning(f'ID "{self.sequence_id}" failed on small sequence (<10 bp)')
-    # else:
-    #         self.logger.info("pass")
-    # self.logger.info(f'Checking too long sequence')
-    # if len(self) > 20000:
-    #     self.logger.warning(f'ID "{self.sequence_id}" failed on long sequence (>20 kbp)')
-    # else:
-    #         self.logger.info("pass")
-    # return
 
     def recode_sequence(self, replace, table, maximum=False):
         """Recode a sequence to replace certain sequences using a given codon table."""
@@ -261,7 +211,6 @@ class Nucleotide(Sequence):
                     options, maximum=maximum, recode=True, skip=[codon]
                 )
                 break
-        # self.logger.warning(f'{codon} --> {new_codon}')
         if "|REC" not in self.sequence_id:
             self.sequence_id += "|REC"
         self.sequence = f"{self.sequence[:i]}{new_codon}{self.sequence[i+3:]}"
@@ -270,20 +219,16 @@ class Nucleotide(Sequence):
 
     def remove_cutsites(self, table, renz=GlobalVariables.RESTRICTION_ENZYMES):
         """Remove recognition sites for restriction enzymes."""
-        # self.logger.info(f'Removing cutsites for {restriction_enzymes}')
         changes = 0
         for cutsite in renz:
             while cutsite in self.sequence:
-                # self.logger.warning(f'{enzyme.enzyme_id} cuts ({cutsite})')
                 changes += 1
                 self = self.recode_sequence(cutsite, table=table)
-        # self.logger.info(f'remove_cutsites made {changes} changes in {self.sequence_id} sequence')
         print(changes)
         return self
 
     def optimize_codon_usage(self, table, maximum=False):
         """Optimize codon usage of a given DNA sequence"""
-        # self.logger.debug('Optimizing codon usage...')
         if not self.basic_cds:
             return self
 
@@ -298,7 +243,6 @@ class Nucleotide(Sequence):
         self, table, part_type="3t", part_options=GlobalVariables.GGA_PART_TYPES
     ):
         """Make DNA part out of a given sequence"""
-        # self.logger.debug('Making parts...')
         seq_id = f"part_gge{part_type}_{self.sequence_id}"
         part = part_options[part_type]
         if (
@@ -314,12 +258,8 @@ class Nucleotide(Sequence):
     def harmonize(self, source, table, mode=0):
         """Optimize codon usage of a given DNA sequence
         mode: 0 for closest frequency; 1 for same index"""
-        # self.logger.debug('Starting special optimization using source codon table...')
         if not self.basic_cds:
             return self
-
-        # self.logger.info(
-        #     f'Special optimization: {"closest frequency" if mode == 0 else "same index"}')
 
         seq_id = self.sequence_id
         optimized = list()
@@ -328,7 +268,6 @@ class Nucleotide(Sequence):
             self.translate(table=table).sequence, self.make_triplets()
         ):
             if amino == "?":
-                # self.logger.warning(f'Unknown amino acid! Appending "NNN"')
                 optimized.append("NNN")
             else:
                 codons = table.loc[amino]
@@ -344,8 +283,6 @@ class Nucleotide(Sequence):
                             best, freq = current_best, cod
 
                     closest_freq_codon = codons[codons["Fraction"] == freq].index[0]
-                    # self.logger.info(
-                    #     f'{triplet} (f:{source_codon_frac:.3f}) --> {closest_freq_codon} (f:{freq:.3f})')
                     optimized.append(closest_freq_codon)
 
                 elif mode == 1:
@@ -356,11 +293,9 @@ class Nucleotide(Sequence):
                     same_index_codon = codons[
                         codons["Fraction"] == sorted_codons_frac[source_codon_index]
                     ].index[0]
-                    # self.logger.info(f'{triplet} --> {same_index_codon} (i:{source_codon_index})')
                     optimized.append(same_index_codon)
 
                 else:
-                    # self.logger.error('Unsupported mode, expected: 1 or 0. Skipping operation')
                     return self
 
         return Nucleotide(f"{seq_id}|HARM{mode}", "".join(optimized))
@@ -381,8 +316,6 @@ class Nucleotide(Sequence):
         def data_fraction(self, table=table, window=window):
             """Calculates average window codon fraction for a given sequence and codon usage table.
             Returns a list of window-fraction values, which can be used for analysis or ploted."""
-            # self.logger.debug(
-            #     f'Calculating fraction values for {self.sequence_id} in {window} codon window...')
 
             values, data = [], []
             codons = table.reset_index().set_index(["Triplet"])
@@ -402,8 +335,6 @@ class Nucleotide(Sequence):
             Reference:
             Clarke TF IV, Clark PL (2008) Rare Codons Cluster. PLoS ONE 3(10): e3412.
             doi:10.1371/journal.pone.0003412"""
-            # self.logger.debug(
-            #     f'Calculating %MinMax values for {self.sequence_id} in {window} codon window...')
 
             tri_table = table.reset_index(level="Triplet")
             values, data = [], []
@@ -439,12 +370,9 @@ class Nucleotide(Sequence):
             return data
 
         if not self.basic_cds:
-            # self.logger.error('Graphing codon usage unsuccessful, sequence is not a CDS!')
             return
 
         if isinstance(other, Nucleotide) and other.basic_cds:
-            # self.logger.debug(
-            #     f'calculating data for {self.sequence_id} and {other.sequence_id}...')
             if minmax:
                 data = [
                     x
@@ -462,7 +390,6 @@ class Nucleotide(Sequence):
                     )
                 ]
         else:
-            # self.logger.debug(f'calculating data for {self.sequence_id}...')
             if minmax:
                 data = data_minmax(self=self, table=table, window=window)
             else:
@@ -472,7 +399,6 @@ class Nucleotide(Sequence):
         zeros = [0 for i in x]
 
         if other:
-            # self.logger.debug(f'Drawing graph for {self.sequence_id} and {other.sequence_id}...')
             y1 = [i[0] for i in data]
             y2 = [i[1] for i in data]
             _, (ax0, ax1) = plt.subplots(2, 1, sharex=True, figsize=(12, 5))
@@ -552,7 +478,6 @@ class Nucleotide(Sequence):
                 ax1.set_ylabel("Fraction")
 
         else:
-            # self.logger.debug(f'Drawing graph for {self.sequence_id}...')
             _, ax = plt.subplots(1, 1, figsize=(12, 2))
             plt.subplots_adjust(left=0.08, right=0.98, bottom=0.25)
             ax.plot(x, data, alpha=0.8, linewidth=0.5)
@@ -594,7 +519,5 @@ class Nucleotide(Sequence):
         plt.xlabel("Codon")
 
         plt.savefig(make_plot_path(n))
-        # self.logger.info(
-        #     f'Codon usage plot for sequence {self.sequence_id} saved: {p}')
 
         return 0

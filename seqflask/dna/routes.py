@@ -14,7 +14,6 @@ def dna_page():
     form = nucleotideSequenceForm()
     clean_old_plots()
     if form.validate_on_submit():
-        # job_id  # TODO: make this unique per job and make a db to track settings
         if form.operation.data == "harmonize" and form.source_organism.data == "0000":
             flash(f"Please select source organism!", "warning")
             return render_template("dna.html", title="DNA", form=form)

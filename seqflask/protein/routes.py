@@ -15,7 +15,6 @@ def protein_page():
     form = proteinSequenceForm()
     clean_old_plots()
     if form.validate_on_submit():
-        # job_id  # TODO: make this unique per job and make a db to track settings
         list_of_sequences = []
         if form.protein_sequence.data:
             try:
@@ -46,7 +45,6 @@ def protein_page():
             except Exception:
                 flash("Ups, something went wrong :(", "danger")
                 return redirect(url_for("protein.protein_page"))
-                # flash(f'Uniprot {form.uniprot_identifier.data} successfully submitted', 'success')
         else:
             flash(f"Nothing to do here...", "warning")
             return redirect(url_for("protein.protein_page"))

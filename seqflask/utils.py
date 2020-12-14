@@ -271,19 +271,16 @@ def fasta_parser(handle):
     else:
         sequences.append((seq_name, "".join(temp)))
 
-    # logger.info(f'Input {len(sequences)} sequences...')
     return sequences
 
 
 def sequence_match(string, search):
     """Returns TRUE if sequence matches condition in search"""
-    # logger.debug('Sequence matching...')
     return not bool(search(string))
 
 
 def load_codon_table(taxonomy_id=None, custom=False, return_name=False):
     """Load a codon table based on the organism's species ID"""
-    # logger.debug(f'load_codon_table(species={species}, taxonomy_id={taxonomy_id}, custom={custom})')
     if custom:
         handle = os.path.join(current_app.root_path, "data/custom_table.spsum")
     else:
@@ -326,7 +323,6 @@ def load_codon_table(taxonomy_id=None, custom=False, return_name=False):
 def get_codon(codons, maximum=False, recode=False, skip=[]):
     """Returns a "locally-optimized" codon. Locally-optimized = mimics the
     codon frequency in the table. Maximum uses the most common codon."""
-    # logger.debug(f'get_codon({list(codons.index)}, maximum={maximum}, recode={recode}, skip={skip})')
     if recode:
         codons = codons.loc[[cod for cod in codons.index if cod not in skip]]
     # Deterministic allocation of codon based on the highest frequency
