@@ -1,11 +1,9 @@
-import re
-import os
-import pandas
 # import logging
+import re
+import pandas
 import matplotlib.pyplot as plt
 from flask import url_for
-from seqflask.seqtools_config import GGA_PART_TYPES, COMMON_SPECIES, RENZ_SHORT
-from seqflask.util import sequence_match, get_codon, DEFAULT_TABLE
+from seqflask.utils import sequence_match, get_codon, GlobalVariables, PLOT_DIR
 
 # logger = logging.getLogger(__name__)
 plt.switch_backend('Agg')
@@ -69,7 +67,7 @@ class Protein(Sequence):
             raise ValueError(f'>{self.sequence_id} :: includes forbidden character(s)! Allowed characters: "GALMFWKQESPVICYHRNDTX?*"')
         self._sequence = string
 
-    def reverse_translate(self, table=DEFAULT_TABLE, maximum=False):
+    def reverse_translate(self, table, maximum=False):
         '''Returns optimized DNA sequence'''
         # self.logger.debug('Making reverse translation...')
         dna_sequence = list()
@@ -173,7 +171,7 @@ class Nucleotide(Sequence):
         strong = ('C', 'G', 'S')
         return 2*sum(map(self.sequence.count, weak)) + 4*sum(map(self.sequence.count, strong))
 
-    def translate(self, table=DEFAULT_TABLE, check=False):
+    def translate(self, table, check=False):
         '''Translate DNA sequence in PROTEIN sequence'''
         # self.logger.debug('Making translation...')
         if not check:
@@ -233,7 +231,7 @@ class Nucleotide(Sequence):
         #         self.logger.info("pass")
         # return
 
-    def recode_sequence(self, replace, table=DEFAULT_TABLE, maximum=False):
+    def recode_sequence(self, replace, table, maximum=False):
         '''Recode a sequence to replace certain sequences using a given codon table.'''
         position = self.sequence.find(replace)
         if position < 0:
@@ -254,7 +252,7 @@ class Nucleotide(Sequence):
 
         return self
 
-    def remove_cutsites(self, renz=RENZ_SHORT, table=DEFAULT_TABLE):
+    def remove_cutsites(self, table, renz=GlobalVariables.RESTRICTION_ENZYMES):
         '''Remove recognition sites for restriction enzymes.'''
         # self.logger.info(f'Removing cutsites for {restriction_enzymes}')
         changes = 0
@@ -267,7 +265,7 @@ class Nucleotide(Sequence):
         print(changes)
         return self
 
-    def optimize_codon_usage(self, table=DEFAULT_TABLE, maximum=False):
+    def optimize_codon_usage(self, table, maximum=False):
         '''Optimize codon usage of a given DNA sequence'''
         # self.logger.debug('Optimizing codon usage...')
         if not self.basic_cds:
@@ -278,19 +276,19 @@ class Nucleotide(Sequence):
 
         return Nucleotide(f'{seq_id}|OPT', optimized.sequence)
 
-    def make_part(self, part_type='3t', part_options=GGA_PART_TYPES, table=DEFAULT_TABLE):
+    def make_part(self, table, part_type='3t', part_options=GlobalVariables.GGA_PART_TYPES):
         '''Make DNA part out of a given sequence'''
         # self.logger.debug('Making parts...')
         seq_id = f'part_gge{part_type}_{self.sequence_id}'
         part = part_options[part_type]
-        if part_type in ('3', '3a', '3b') and self.translate(check=True).sequence[-1] == '*':
+        if part_type in ('3', '3a', '3b') and self.translate(table=table, check=True).sequence[-1] == '*':
             sequence = f'{part["prefix"]}{self.sequence[:-3]}{part["suffix"]}'
         else:
             sequence = f'{part["prefix"]}{self.sequence}{part["suffix"]}'
 
         return Nucleotide(seq_id, sequence)
     
-    def harmonize(self, source=DEFAULT_TABLE, mode=0, table=DEFAULT_TABLE):
+    def harmonize(self, source, table, mode=0):
         '''Optimize codon usage of a given DNA sequence
         mode: 0 for closest frequency; 1 for same index'''
         # self.logger.debug('Starting special optimization using source codon table...')
@@ -339,9 +337,8 @@ class Nucleotide(Sequence):
         return Nucleotide(f'{seq_id}|HARM{mode}', ''.join(optimized))
 
     
-    def plot_codon_usage(self, window=16, other=None, other_id=None, table=DEFAULT_TABLE, 
-                          minmax=True, target_organism='Yarrowia lipolytica',
-                          table_other=DEFAULT_TABLE, n=0):
+    def plot_codon_usage(self, table, table_other=False,  window=16, other=None, other_id=None, 
+                          minmax=True, target_organism='Yarrowia lipolytica', n=0):
         '''Graph codon frequency of a given gene'''
 
         def data_fraction(self, table=table, window=window):
@@ -494,8 +491,7 @@ class Nucleotide(Sequence):
         plt.xlim(-4, len(data)+4)
         plt.xlabel('Codon')
 
-        p = os.path.join(os.path.join(os.getcwd(), f'seqflask/static/images/plot{n+1}.png'))
-        plt.savefig(p)
+        plt.savefig(f'{PLOT_DIR()}plot{n+1}.png')
         # self.logger.info(
         #     f'Codon usage plot for sequence {self.sequence_id} saved: {p}')
 

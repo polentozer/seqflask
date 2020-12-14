@@ -20,20 +20,20 @@
     <header class='site-header'>
       <nav class='navbar navbar-expand-md navbar-dark bg-steel fixed-top'>
         <div class='container'>
-          <a class='navbar-brand mr-4' href='{{ url_for("home") }}'>SEQTOOLS</a>
+          <a class='navbar-brand mr-4' href='{{ url_for("main.home") }}'>SEQTOOLS</a>
           <button class='navbar-toggler' type='button' data-toggle='collapse' data-target='#navbarToggle'>
             <span class='navbar-toggler-icon'></span>
           </button>
           <div class='collapse navbar-collapse' id='navbarToggle'>
             <div class='navbar-nav mr-auto'>
-              <a class='nav-item nav-link' href='{{ url_for("dna") }}'>DNA</a>
-              <a class='nav-item nav-link' href='{{ url_for("protein") }}'>PROTEIN</a>
-              <a class='nav-item nav-link' href='{{ url_for("generator") }}'>FREE DNA Generator</a>
+              <a class='nav-item nav-link' href='{{ url_for("dna.dna_page") }}'>DNA</a>
+              <a class='nav-item nav-link' href='{{ url_for("protein.protein_page") }}'>PROTEIN</a>
+              <a class='nav-item nav-link' href='{{ url_for("generator.generator_page") }}'>FREE DNA Generator</a>
             </div>
             <!-- Navbar Right Side -->
-            <div class='navbar-nav'>
+            <!-- <div class='navbar-nav'>
               <a class='nav-item nav-link' href='#'>placeholder</a>
-            </div>
+            </div> -->
           </div>
         </div>
       </nav>
