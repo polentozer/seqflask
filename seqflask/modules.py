@@ -337,7 +337,7 @@ class Nucleotide(Sequence):
         return Nucleotide(f'{seq_id}|HARM{mode}', ''.join(optimized))
 
     
-    def plot_codon_usage(self, table, table_other=False,  window=16, other=None, other_id=None, 
+    def plot_codon_usage(self, table,  window=16, other=None, other_id=None, table_other=None, 
                           minmax=True, target_organism='Yarrowia lipolytica', n=0):
         '''Graph codon frequency of a given gene'''
 

@@ -33,6 +33,7 @@ def dna_operation(list_of_sequences, form):
                     window=16,
                     other=rec[0],
                     table=CODON_TABLE,
+                    table_other=CODON_TABLE,
                     target_organism=target_organism_name,
                     n=n)
         if form.golden_gate.data != '0000':

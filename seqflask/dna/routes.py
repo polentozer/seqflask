@@ -9,7 +9,7 @@ from seqflask.dna.utils import dna_operation
 dna = Blueprint('dna', __name__)
 
 
-@dna.route("/dna", methods=['GET', 'POS.T'])
+@dna.route("/dna", methods=['GET', 'POST'])
 def dna_page():
     form = nucleotideSequenceForm()
     clean_old_plots()
