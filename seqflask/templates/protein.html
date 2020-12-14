@@ -1,67 +1,67 @@
 {% extends "layout.html" %}
 {% block content %}
-  <h1>PROTEIN-TOOLS</h1>
-  <div class="content-section">
-    <form method="POST" action="">
-      {{ form.hidden_tag() }}
-      <fieldset class="form-group">
-        <legend class="border-bottom mb-4">Input PROTEIN Sequence</legend>
-        <div class="form-group">
-          {{ form.uniprot_identifier.label(class="form-control-label") }}
-          {% if form.uniprot_identifier.errors %}
-            {{ form.uniprot_identifier(rows="6", class="form-control form-control-sm is-invalid") }}
-            <div class="invalid-feedback">
-              {% for error in form.uniprot_identifier.errors %}
-                <span>{{ error }}</span>
-              {% endfor %}
-            </div>
-          {% else %}
-            {{ form.uniprot_identifier(rows="6", class="form-control form-control-sm") }}
-          {% endif %}
+<h1>PROTEIN-TOOLS</h1>
+<div class="content-section">
+  <form method="POST" action="">
+    {{ form.hidden_tag() }}
+    <fieldset class="form-group">
+      <legend class="border-bottom mb-4">Input PROTEIN Sequence</legend>
+      <div class="form-group">
+        {{ form.uniprot_identifier.label(class="form-control-label") }}
+        {% if form.uniprot_identifier.errors %}
+        {{ form.uniprot_identifier(rows="6", class="form-control form-control-sm is-invalid") }}
+        <div class="invalid-feedback">
+          {% for error in form.uniprot_identifier.errors %}
+          <span>{{ error }}</span>
+          {% endfor %}
         </div>
-        <div class="form-group">
-          {{ form.protein_sequence.label(class="form-control-label") }}
-          {% if form.protein_sequence.errors %}
-            {{ form.protein_sequence(rows="6", class="form-control form-control-sm is-invalid") }}
-            <div class="invalid-feedback">
-              {% for error in form.protein_sequence.errors %}
-                <span>{{ error }}</span>
-              {% endfor %}
-            </div>
-          {% else %}
-            {{ form.protein_sequence(rows="6", class="form-control form-control-sm") }}
-          {% endif %}
+        {% else %}
+        {{ form.uniprot_identifier(rows="6", class="form-control form-control-sm") }}
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {{ form.protein_sequence.label(class="form-control-label") }}
+        {% if form.protein_sequence.errors %}
+        {{ form.protein_sequence(rows="6", class="form-control form-control-sm is-invalid") }}
+        <div class="invalid-feedback">
+          {% for error in form.protein_sequence.errors %}
+          <span>{{ error }}</span>
+          {% endfor %}
         </div>
-        <div class="form-group">
-          {{ form.target_organism.label(class="form-control-label") }}
-          {{ form.target_organism(class="form-control form-control-sm") }}
-        </div>
-        <div class="form-group">
-          {{ form.golden_gate.label(class="form-control-label") }}
-          {{ form.golden_gate(class="form-control form-control-sm") }}
-        </div>
-        <div class="form-group pt-2">
-          <label class="form-control-label">Extra options</label><br>
-          <div class="form-check-inline">
-            <div class="form-group">
-              {{ form.reverse(class="form-check-input") }}
-              {{ form.reverse.label(class="form-check-label") }}
-            </div>
-            <div class="form-group pl-5">
-              {{ form.maximize(class="form-check-input") }}
-              {{ form.maximize.label(class="form-check-label") }}
-            </div>
-            <div class="form-group pl-5">
-              {{ form.plot(class="form-check-input") }}
-              {{ form.plot.label(class="form-check-label") }}
-            </div>
+        {% else %}
+        {{ form.protein_sequence(rows="6", class="form-control form-control-sm") }}
+        {% endif %}
+      </div>
+      <div class="form-group">
+        {{ form.target_organism.label(class="form-control-label") }}
+        {{ form.target_organism(class="form-control form-control-sm") }}
+      </div>
+      <div class="form-group">
+        {{ form.golden_gate.label(class="form-control-label") }}
+        {{ form.golden_gate(class="form-control form-control-sm") }}
+      </div>
+      <div class="form-group pt-2">
+        <label class="form-control-label">Extra options</label><br>
+        <div class="form-check-inline">
+          <div class="form-group">
+            {{ form.reverse(class="form-check-input") }}
+            {{ form.reverse.label(class="form-check-label") }}
+          </div>
+          <div class="form-group pl-5">
+            {{ form.maximize(class="form-check-input") }}
+            {{ form.maximize.label(class="form-check-label") }}
+          </div>
+          <div class="form-group pl-5">
+            {{ form.plot(class="form-check-input") }}
+            {{ form.plot.label(class="form-check-label") }}
           </div>
         </div>
-      </fieldset>
-      <div class="form-group">
-        {{ form.submit(class="btn btn-outline-info") }}
       </div>
-    </form>
-    {% include "output.html" %}
-  </div>
+    </fieldset>
+    <div class="form-group">
+      {{ form.submit(class="btn btn-outline-info") }}
+    </div>
+  </form>
+  {% include "output.html" %}
+</div>
 {% endblock content %}

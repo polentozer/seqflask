@@ -5,7 +5,7 @@
     {{ field(class='form-control', **kwargs)|safe }}
     <ul>
       {% for error in field.errors %}
-        <li style="color:red;">{{ error }}</li>
+      <li style="color:red;">{{ error }}</li>
       {% endfor %}
     </ul>
   </div>

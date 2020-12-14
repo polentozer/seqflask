@@ -1,10 +1,12 @@
 from seqflask.utils import load_codon_table
 
 DNA_OPERATIONS = [
-        ('translate', 'Translate'),
-        ('optimize', 'Optimize'),
-        ('harmonize', 'Harmonize'),
-        ('remove', 'Remove GoldenGate cutsites')]
+    ("translate", "Translate"),
+    ("optimize", "Optimize"),
+    ("harmonize", "Harmonize"),
+    ("remove", "Remove GoldenGate cutsites"),
+]
+
 
 def dna_operation(list_of_sequences, form):
     CODON_TABLE = load_codon_table(taxonomy_id=form.target_organism.data)
@@ -13,20 +15,29 @@ def dna_operation(list_of_sequences, form):
         if target[0] == form.target_organism.data:
             target_organism_name = target[1]
 
-    if form.operation.data == 'translate':
-        modified = [single.translate(table=CODON_TABLE, check=True) for single in list_of_sequences]
+    if form.operation.data == "translate":
+        modified = [
+            single.translate(table=CODON_TABLE, check=True)
+            for single in list_of_sequences
+        ]
         if form.plot.data:
             for n, rec in enumerate(list_of_sequences):
                 rec.plot_codon_usage(
                     window=16,
                     table=CODON_TABLE,
                     target_organism=target_organism_name,
-                    n=n)
+                    n=n,
+                )
 
-    if form.operation.data == 'optimize':
-        modified = [single.optimize_codon_usage(table=CODON_TABLE, maximum=form.maximize.data) for single in list_of_sequences]
-        if form.golden_gate.data != '0000':
-            modified = [single.remove_cutsites(table=CODON_TABLE) for single in modified]
+    if form.operation.data == "optimize":
+        modified = [
+            single.optimize_codon_usage(table=CODON_TABLE, maximum=form.maximize.data)
+            for single in list_of_sequences
+        ]
+        if form.golden_gate.data != "0000":
+            modified = [
+                single.remove_cutsites(table=CODON_TABLE) for single in modified
+            ]
         if form.plot.data:
             for n, rec in enumerate(zip(list_of_sequences, modified)):
                 rec[1].plot_codon_usage(
@@ -35,21 +46,30 @@ def dna_operation(list_of_sequences, form):
                     table=CODON_TABLE,
                     table_other=CODON_TABLE,
                     target_organism=target_organism_name,
-                    n=n)
-        if form.golden_gate.data != '0000':
-            modified = [single.make_part(part_type=form.golden_gate.data, table=CODON_TABLE) for single in modified]
+                    n=n,
+                )
+        if form.golden_gate.data != "0000":
+            modified = [
+                single.make_part(part_type=form.golden_gate.data, table=CODON_TABLE)
+                for single in modified
+            ]
 
-    if form.operation.data == 'harmonize':
+    if form.operation.data == "harmonize":
         for target in form.source_organism.choices:
             if target[0] == form.source_organism.data:
                 source_organism_name = target[1]
 
         SOURCE_TABLE = load_codon_table(taxonomy_id=form.source_organism.data)
 
-        modified = [single.harmonize(table=CODON_TABLE, source=SOURCE_TABLE, mode=0) for single in list_of_sequences]
+        modified = [
+            single.harmonize(table=CODON_TABLE, source=SOURCE_TABLE, mode=0)
+            for single in list_of_sequences
+        ]
 
-        if form.golden_gate.data != '0000':
-            modified = [single.remove_cutsites(table=CODON_TABLE) for single in modified]
+        if form.golden_gate.data != "0000":
+            modified = [
+                single.remove_cutsites(table=CODON_TABLE) for single in modified
+            ]
         if form.plot.data:
             for n, rec in enumerate(zip(list_of_sequences, modified)):
                 rec[1].plot_codon_usage(
@@ -59,20 +79,30 @@ def dna_operation(list_of_sequences, form):
                     table=CODON_TABLE,
                     table_other=SOURCE_TABLE,
                     target_organism=target_organism_name,
-                    n=n)
-        if form.golden_gate.data != '0000':
-            modified = [single.make_part(part_type=form.golden_gate.data, table=CODON_TABLE) for single in modified]
+                    n=n,
+                )
+        if form.golden_gate.data != "0000":
+            modified = [
+                single.make_part(part_type=form.golden_gate.data, table=CODON_TABLE)
+                for single in modified
+            ]
 
-    if form.operation.data =='remove':
-        modified = [single.remove_cutsites(table=CODON_TABLE) for single in list_of_sequences]
+    if form.operation.data == "remove":
+        modified = [
+            single.remove_cutsites(table=CODON_TABLE) for single in list_of_sequences
+        ]
         if form.plot.data:
             for n, rec in enumerate(list_of_sequences):
                 rec.plot_codon_usage(
                     window=16,
                     table=CODON_TABLE,
                     target_organism=target_organism_name,
-                    n=n)
-        if form.golden_gate.data != '0000':
-            modified = [single.make_part(part_type=form.golden_gate.data, table=CODON_TABLE) for single in modified]
-    
+                    n=n,
+                )
+        if form.golden_gate.data != "0000":
+            modified = [
+                single.make_part(part_type=form.golden_gate.data, table=CODON_TABLE)
+                for single in modified
+            ]
+
     return modified
