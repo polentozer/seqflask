@@ -1,3 +1,4 @@
+# cSpell: disable
 import os
 from random import random
 from pandas import DataFrame

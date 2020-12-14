@@ -28,7 +28,7 @@ class nucleotideSequenceForm(FlaskForm):
         "Select operation", choices=DNA_OPERATIONS, default="optimize"
     )
     golden_gate = SelectField(
-        "Add GoldenGate prefix/sufix for part",
+        "Add GoldenGate prefix/suffix for part",
         choices=[("0000", "---")]
         + [(k, v["info"]) for k, v in GlobalVariables.GGA_PART_TYPES.items()],
         default="0000",
