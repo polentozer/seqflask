@@ -8,9 +8,6 @@ from seqflask.seqtools_config import ORGANISM_CHOICES, DNA_OPERATIONS, GGA_PART_
 
 
 class nucleotideSequenceForm(FlaskForm):
-    job_name = StringField(
-        'Job name',
-        validators=[Optional()])
     dna_sequence = StringField(
         'DNA Sequence(s)',
         widget=TextArea(),
@@ -43,10 +40,6 @@ class nucleotideSequenceForm(FlaskForm):
 
 
 class proteinSequenceForm(FlaskForm):
-    # TODO: uniprot & fasta validator
-    job_name = StringField(
-        'Job name',
-        validators=[Optional()])
     uniprot_identifier = StringField(
         'UNIPROT accession number',
         validators=[Optional(), Length(min=6)])

@@ -15,7 +15,7 @@ def fasta_parser(handle):
 
     for line in stream:
         if line.strip()[0] == '>':
-            seq_name = line.strip()[1:]
+            seq_name = line.strip()[1:71]
             break
     else:
         return sequences
@@ -25,7 +25,7 @@ def fasta_parser(handle):
         if line and line.strip()[0] == '>':
             if temp:
                 sequences.append((seq_name, "".join(temp)))
-            seq_name = line.strip()[1:]
+            seq_name = line.strip()[1:71]
             temp = []
             continue
         else:
