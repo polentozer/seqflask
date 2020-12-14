@@ -49,7 +49,7 @@ class proteinSequenceForm(FlaskForm):
         validators=[Optional()])
     uniprot_identifier = StringField(
         'UNIPROT accession number',
-        validators=[Optional(), Length(min=6, max=10)])
+        validators=[Optional(), Length(min=6)])
     protein_sequence = StringField(
         'PROTEIN Sequence(s)',
         widget=TextArea(),

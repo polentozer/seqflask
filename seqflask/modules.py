@@ -66,7 +66,7 @@ class Protein(Sequence):
     def sequence(self, string):
         allowed_characters = re.compile(r'[^\*\?GALMFWKQESPVICYHRNDTX]')
         if not sequence_match(string, allowed_characters.search):
-            raise ValueError(f'Protein sequence includes unallowed character(s):\n{string}')
+            raise ValueError(f'>{self.sequence_id} :: includes forbidden character(s)! Allowed characters: "GALMFWKQESPVICYHRNDTX?*"')
         self._sequence = string
 
     def reverse_translate(self, table=DEFAULT_TABLE, maximum=False):
@@ -75,10 +75,8 @@ class Protein(Sequence):
         dna_sequence = list()
         if maximum:
             name = '|NUC-MAX'
-            maximum = True
         else:
             name = '|NUC'
-            maximum = False
         for amino in self.sequence:
             if amino in '?X':
                 dna_sequence.append('NNN')
@@ -109,7 +107,7 @@ class Nucleotide(Sequence):
     def sequence(self, string):
         allowed_characters = re.compile(r'[^ACTGNUSW]')
         if not sequence_match(string, allowed_characters.search):
-            raise ValueError(f'Nucleotide sequence includes unallowed character(s):\n{string}')
+            raise ValueError(f'>{self.sequence_id} :: includes forbidden character(s)! Allowed characters: "ACTGN"')
         self._sequence = string
 
     @property
@@ -266,7 +264,7 @@ class Nucleotide(Sequence):
                 changes += 1
                 self = self.recode_sequence(cutsite, table=table)
         # self.logger.info(f'remove_cutsites made {changes} changes in {self.sequence_id} sequence')
-
+        print(changes)
         return self
 
     def optimize_codon_usage(self, table=DEFAULT_TABLE, maximum=False):
