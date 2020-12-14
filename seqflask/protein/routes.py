@@ -3,7 +3,7 @@ import time
 import requests
 from flask import Blueprint, render_template, url_for, flash, redirect
 from seqflask.modules import Protein
-from seqflask.utils import fasta_parser, load_codon_table, PLOT_DIR
+from seqflask.utils import fasta_parser, load_codon_table, clean_old_plots
 from seqflask.protein.forms import proteinSequenceForm
 
 
@@ -13,8 +13,7 @@ protein = Blueprint('protein', __name__)
 @protein.route("/protein", methods=['GET', 'POST'])
 def protein_page():
     form = proteinSequenceForm()
-    for file in os.scandir(PLOT_DIR()):
-        os.remove(file.path)
+    clean_old_plots()
     if form.validate_on_submit():
         # job_id  # TODO: make this unique per job and make a db to track settings
         list_of_sequences = []
@@ -32,7 +31,7 @@ def protein_page():
             for uniprot_identifier in str(form.uniprot_identifier.data).split(","):
                 uniprot_uri = f"https://www.uniprot.org/uniprot/{uniprot_identifier.replace(' ', '')}.fasta"
                 uniprot_response = requests.get(uniprot_uri)
-                uniprot_data += (uniprot_response.text)
+                uniprot_data += f'{uniprot_response.text}*'
                 time.sleep(0.1)
             try:
                 list_of_sequences = [Protein(rec[0], rec[1]) for rec in fasta_parser(uniprot_data)]
@@ -64,7 +63,7 @@ def protein_page():
                         target_organism=target_organism_name,
                         n=n)
             if form.golden_gate.data != '0000':
-                modified = [single.make_part(part_type=form.golden_gate.data) for single in modified]
+                modified = [single.make_part(part_type=form.golden_gate.data, table=CODON_TABLE) for single in modified]
         else:
             modified = False
 

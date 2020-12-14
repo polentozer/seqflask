@@ -3,7 +3,7 @@ import re
 import pandas
 import matplotlib.pyplot as plt
 from flask import url_for
-from seqflask.utils import sequence_match, get_codon, GlobalVariables, PLOT_DIR
+from seqflask.utils import sequence_match, get_codon, GlobalVariables, make_plot_path
 
 # logger = logging.getLogger(__name__)
 plt.switch_backend('Agg')
@@ -491,7 +491,7 @@ class Nucleotide(Sequence):
         plt.xlim(-4, len(data)+4)
         plt.xlabel('Codon')
 
-        plt.savefig(f'{PLOT_DIR()}plot{n+1}.png')
+        plt.savefig(make_plot_path(n))
         # self.logger.info(
         #     f'Codon usage plot for sequence {self.sequence_id} saved: {p}')
 

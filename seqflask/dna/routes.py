@@ -1,7 +1,7 @@
 import os
 from flask import Blueprint, render_template, url_for, flash, redirect
 from seqflask.modules import Nucleotide
-from seqflask.utils import fasta_parser, GlobalVariables, PLOT_DIR
+from seqflask.utils import fasta_parser, GlobalVariables, clean_old_plots
 from seqflask.dna.forms import nucleotideSequenceForm
 from seqflask.dna.utils import dna_operation
 
@@ -12,8 +12,7 @@ dna = Blueprint('dna', __name__)
 @dna.route("/dna", methods=['GET', 'POS.T'])
 def dna_page():
     form = nucleotideSequenceForm()
-    for file in os.scandir(PLOT_DIR()):
-        os.remove(file.path)
+    clean_old_plots()
     if form.validate_on_submit():
         # job_id  # TODO: make this unique per job and make a db to track settings
         if form.operation.data == 'harmonize' and form.source_organism.data == '0000':

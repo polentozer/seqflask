@@ -3,12 +3,6 @@ from random import random
 from pandas import DataFrame
 from flask import current_app
 
-def PLOT_DIR():
-    return os.path.join(current_app.root_path, f'static/images/')
-def CODON_USAGE_DB():
-    return os.path.join(current_app.root_path, 'data/codon_usage.spsum')
-def CUSTOM_CODON_USAGE_DB():
-    return os.path.join(current_app.root_path, 'data/custom_table.spsum')
 
 class GlobalVariables:
     CODONS = [
@@ -127,6 +121,15 @@ class GlobalVariables:
     }
 
 
+def clean_old_plots():
+    for file in os.scandir(os.path.join(current_app.root_path, 'static/images/')):
+        os.remove(file.path)
+
+
+def make_plot_path(n):
+    return f"{os.path.join(current_app.root_path, f'static/images/plot{n+1}.png')}"
+
+
 def fasta_parser(handle):
     '''Parser for fasta sequences.'''
     stream = handle.split('\n')
@@ -166,9 +169,9 @@ def load_codon_table(taxonomy_id=None, custom=False, return_name=False):
     '''Load a codon table based on the organism's species ID'''
     # logger.debug(f'load_codon_table(species={species}, taxonomy_id={taxonomy_id}, custom={custom})')
     if custom:
-        handle = CUSTOM_CODON_USAGE_DB()
+        handle = os.path.join(current_app.root_path, 'data/custom_table.spsum')
     else:
-        handle = CODON_USAGE_DB()
+        handle = os.path.join(current_app.root_path, 'data/codon_usage.spsum')
 
     with open(handle) as h:
         for header in h:

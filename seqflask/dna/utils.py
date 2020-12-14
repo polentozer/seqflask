@@ -36,7 +36,7 @@ def dna_operation(list_of_sequences, form):
                     target_organism=target_organism_name,
                     n=n)
         if form.golden_gate.data != '0000':
-            modified = [single.make_part(part_type=form.golden_gate.data) for single in modified]
+            modified = [single.make_part(part_type=form.golden_gate.data, table=CODON_TABLE) for single in modified]
 
     if form.operation.data == 'harmonize':
         for target in form.source_organism.choices:
@@ -60,7 +60,7 @@ def dna_operation(list_of_sequences, form):
                     target_organism=target_organism_name,
                     n=n)
         if form.golden_gate.data != '0000':
-            modified = [single.make_part(part_type=form.golden_gate.data) for single in modified]
+            modified = [single.make_part(part_type=form.golden_gate.data, table=CODON_TABLE) for single in modified]
 
     if form.operation.data =='remove':
         modified = [single.remove_cutsites(table=CODON_TABLE) for single in list_of_sequences]
@@ -72,6 +72,6 @@ def dna_operation(list_of_sequences, form):
                     target_organism=target_organism_name,
                     n=n)
         if form.golden_gate.data != '0000':
-            modified = [single.make_part(part_type=form.golden_gate.data) for single in modified]
+            modified = [single.make_part(part_type=form.golden_gate.data, table=CODON_TABLE) for single in modified]
     
     return modified
