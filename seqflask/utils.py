@@ -240,7 +240,8 @@ class GlobalVariables:
 
 def clean_old_plots():
     for file in os.scandir(os.path.join(current_app.root_path, "static/images/")):
-        os.remove(file.path)
+        if file.name[-4:] == ".png":
+            os.remove(file.path)
 
 
 def make_plot_path(n):
