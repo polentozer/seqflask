@@ -228,6 +228,3 @@ pip-selfcheck.json
 *.code-workspace
 
 # End of https://www.toptal.com/developers/gitignore/api/virtualenv,python,flask,vscode
-
-# Matplotlib plots
-seqflask/static/images/plot*
