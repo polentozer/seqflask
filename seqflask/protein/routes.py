@@ -33,7 +33,7 @@ def protein_page():
             for uniprot_identifier in str(form.uniprot_identifier.data).split(","):
                 uniprot_uri = f"https://www.uniprot.org/uniprot/{uniprot_identifier.replace(' ', '')}.fasta"
                 uniprot_response = requests.get(uniprot_uri)
-                uniprot_data += f"{uniprot_response.text}*"
+                uniprot_data += f"{uniprot_response.text[:-1]}*\n"
                 time.sleep(0.1)
             try:
                 list_of_sequences = [
