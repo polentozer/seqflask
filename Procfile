@@ -1,1 +1,1 @@
-web: gunicorn seqflask.wsgi
+web: gunicorn run:app
