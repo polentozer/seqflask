@@ -146,14 +146,17 @@ class GlobalVariables:
         ("1471", "Bacillus methanolicus"),
         ("9606", "Homo sapiens"),
         ("1927", "Streptomyces rimosus"),
+        ("553", "Pantoea ananatis"),
+        ("5421", "Xanthophyllomyces dendrorhous"),
+        ("246200", "Silicibacter pomeroyi"),
     ]
     RESTRICTION_ENZYMES = [
-        "GGTCTC",  # BsaI
-        "GAGACC",  # BsaI reverse
-        "CGTCTC",  # BsmBI
-        "GAGACG",  # BsmBI reverse
-        "GCGGCCGC",
-    ]  # NotI
+        "GGTCTC",   # BsaI
+        "GAGACC",   # BsaI reverse
+        "CGTCTC",   # BsmBI
+        "GAGACG",   # BsmBI reverse
+        "GCGGCCGC", # NotI
+    ]
     GGA_PART_TYPES = {
         "1": {
             "prefix": "GCATCGTCTCATCGGAGTCGGTCTCACCCT",
