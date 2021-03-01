@@ -139,16 +139,32 @@ class GlobalVariables:
         "*",
     ]
     ORGANISM_CHOICES = [
-        ("83333", "Escherichia coli K12"),
+        ("37762", "Escherichia coli"),
         ("4932", "Saccharomyces cerevisiae"),
+        ("4932.mitochondrion", "Saccharomyces cerevisiae mitochondrion"),
         ("284591", "Yarrowia lipolytica CLIB122"),
         ("1423", "Bacilus subtilis"),
-        ("1471", "Bacillus methanolicus"),
+        ("1471", "Bacillus methanolicus (21)"),
         ("9606", "Homo sapiens"),
-        ("1927", "Streptomyces rimosus"),
+        ("1927", "Streptomyces rimosus (29)"),
         ("553", "Pantoea ananatis"),
         ("5421", "Xanthophyllomyces dendrorhous"),
         ("246200", "Silicibacter pomeroyi"),
+        ("5476", "Candida albicans"),
+        ("5076", "Penicillium chrysogenum"),
+        ("284590", "Kluyveromyces lactis NRRL Y-1140"),
+        ("203120", "Leuconostoc mesenteroides subsp. mesenteroides ATCC 8293"),
+        ("302911", "Bifidobacterium animalis subsp. lactis"),
+        ("1589", "Lactobacillus pentosus"),
+        ("4896", "Schizosaccharomyces pombe"),
+        ("5548", "Trichoderma longibrachiatum (4)"),
+        ("5580", "Aureobasidium pullulans"),
+        ("431943", "Clostridium kluyveri DSM 555"),
+        ("243230", "Deinococcus radiodurans R1"),
+        ("160488", "Pseudomonas putida"),
+        ("553", "Pantoea ananatis (9)"),
+        ("224326", "Borrelia burgdorferi B31 (1639)"),
+        ("9913", "Bos taurus (13374)")
     ]
     RESTRICTION_ENZYMES = [
         "GGTCTC",   # BsaI
