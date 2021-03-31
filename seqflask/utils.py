@@ -146,6 +146,7 @@ class GlobalVariables:
         ("1423", "Bacilus subtilis"),
         ("1471", "Bacillus methanolicus (21)"),
         ("9606", "Homo sapiens"),
+        ("3702", "Arabidopsis thaliana (80395)"),
         ("1927", "Streptomyces rimosus (29)"),
         ("553", "Pantoea ananatis"),
         ("5421", "Xanthophyllomyces dendrorhous"),
