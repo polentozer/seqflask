@@ -166,7 +166,7 @@ class GlobalVariables:
         ("553", "Pantoea ananatis (9)"),
         ("224326", "Borrelia burgdorferi B31 (1639)"),
         ("9913", "Bos taurus (13374)"),
-        ("3483":, "Cannabis sativa: (8)"),
+        ("3483", "Cannabis sativa: (8)"),
     ]
     RESTRICTION_ENZYMES = [
         "GGTCTC",   # BsaI
