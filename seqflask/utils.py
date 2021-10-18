@@ -144,6 +144,8 @@ class GlobalVariables:
         ("4932.mitochondrion", "Saccharomyces cerevisiae mitochondrion"),
         ("284591", "Yarrowia lipolytica CLIB122"),
         ("1423", "Bacilus subtilis"),
+        ("284591", "Yarrowia lipolytica CLIB122"),
+        ("265072", "Methylobacillus flagellatus KT (2753)"),
         ("1471", "Bacillus methanolicus (21)"),
         ("9606", "Homo sapiens"),
         ("3702", "Arabidopsis thaliana (80395)"),
