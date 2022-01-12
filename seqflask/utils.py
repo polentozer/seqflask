@@ -159,7 +159,7 @@ class GlobalVariables:
         ("302911", "Bifidobacterium animalis subsp. lactis (29)"),
         ("1589", "Lactobacillus pentosus (6)"),
         ("4896", "Schizosaccharomyces pombe (6109)"),
-        ("431241", "Trichoderma reesei QM6a (8439)")
+        ("431241", "Trichoderma reesei QM6a (8439)"),
         ("5580", "Aureobasidium pullulans (13)"),
         ("431943", "Clostridium kluyveri DSM 555 (3913)"),
         ("243230", "Deinococcus radiodurans R1 (3106)"),
