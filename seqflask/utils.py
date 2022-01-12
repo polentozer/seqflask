@@ -176,7 +176,7 @@ class GlobalVariables:
         ("7107", "Spodoptera exigua: (38)"),
         ("263930", "Yponomeuta evonymellus: (222)"),
         ("29057", "Ostrinia nubilalis: (57)"),
-        ("1163748", "*Marinobacter hydrocarbonoclasticus (H. nauticus) (3610)")
+        ("1163748", "*Marinobacter hydrocarbonoclasticus (H. nauticus) (3610)"),
         ("13429", "Cinnamomum camphora: (5)"),
         ("4577", "*Zea mays: (57651)"),
     ]
