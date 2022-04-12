@@ -155,6 +155,7 @@ class GlobalVariables:
         ("243230", "Deinococcus radiodurans R1 (3106)"),
         ("121845", "*Diaphorina citri: (22814)"),
         ("37762", "Escherichia coli (8089)"),
+        ("44745", "Haematococcus pluvialis (CAUTION: FROM 23 GENES ONLY!!)")
         ("9606", "Homo sapiens (93487)"),
         ("284590", "Kluyveromyces lactis NRRL Y-1140 (5217)"),
         ("1589", "Lactobacillus pentosus (6)"),
