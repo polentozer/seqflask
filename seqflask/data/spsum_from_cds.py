@@ -26,6 +26,9 @@ spsum_format = "CGA CGC CGG CGT AGA AGG CTA CTC CTG CTT TTA TTG TCA TCC TCG TCT 
 
 
 def parse_options():
+    """
+    python spsum_from_cds.py <path-to-fasta-with-genes.fasta> -i <taxid> -n <organism name>
+    """
     parser = argparse.ArgumentParser(description='Generate a frequency file from a CDS fasta file used for the codonharmonizer')
 
     parser.add_argument(dest="fasta_filepath", help="DNA multi-fasta file of protein coding genes", metavar="CDS-FASTA")

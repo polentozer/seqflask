@@ -179,6 +179,9 @@ class GlobalVariables:
         ("284591", "Yarrowia lipolytica CLIB122 (5967)"),
         ("263930", "Yponomeuta evonymellus: (222)"),
         ("4577", "*Zea mays: (57651)"),
+        ("82528", "Crocus sativus (26)"),
+        ("28540", "Buddleja davidii (5)"),
+        ("1148", "Synechoscystis sp. PCC6803 (3623)"),
     ]
     RESTRICTION_ENZYMES = [
         "GGTCTC",   # BsaI
