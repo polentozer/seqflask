@@ -275,28 +275,26 @@ class GlobalVariables:
 
 
 def clean_old_plots():
-    for file in os.scandir(os.path.join(current_app.root_path, "static/images/")):
+    for file in os.scandir(os.path.join(current_app.root_path, "static/images/plots/")):
         if file.name[-4:] == ".png":
             os.remove(file.path)
 
 
 def make_plot_path(n):
-    return f"{os.path.join(current_app.root_path, f'static/images/plot{n+1}.png')}"
+    return f"{os.path.join(current_app.root_path, f'static/images/plots/plot{n+1}.png')}"
 
 
 def fasta_parser(handle):
     """Parser for fasta sequences."""
     stream = handle.split("\n")
     sequences = []
-
-    for line in stream:
-        if line.strip()[0] == ">":
-            seq_name = line.strip()[1:71]
-            break
-    else:
-        return sequences
-
     temp = []
+
+    if stream[0].strip()[0] == ">":
+        seq_name = stream[0].strip()[1:71]
+    else:
+        raise ValueError('Missing fasta header ">Sequence name"')
+
     for line in stream:
         if line and line.strip()[0] == ">":
             if temp:

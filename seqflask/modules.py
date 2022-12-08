@@ -311,7 +311,7 @@ class Nucleotide(Sequence):
         target_organism="Yarrowia lipolytica",
         n=0,
     ):
-        """Graph codon frequency of a given gene"""
+        """Plot codon frequency of a given gene"""
 
         def data_fraction(self, table=table, window=window):
             """Calculates average window codon fraction for a given sequence and codon usage table.
