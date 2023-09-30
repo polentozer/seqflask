@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField, SelectField, RadioField
+from wtforms import StringField, SubmitField, BooleanField, SelectField, RadioField, IntegerField
 from wtforms.widgets import TextArea
-from wtforms.validators import DataRequired, Length, Optional
+from wtforms.validators import DataRequired, Length, Optional, NumberRange
 from seqflask.utils import GlobalVariables
 from seqflask.dna.utils import DNA_OPERATIONS
 
@@ -34,6 +34,12 @@ class nucleotideSequenceForm(FlaskForm):
         default="0000",
         validators=[Optional()],
     )
+    minimal_optimization_value = IntegerField(
+        "Input minimal optimization value",
+        default=0,
+        validators=[Optional(), NumberRange(min=-50, max=50)],
+    )
     maximize = BooleanField("Maximize", validators=[Optional()])
     plot = BooleanField("Draw plots", validators=[Optional()])
+    set_minimal_optimization = BooleanField("Optimization value", validators=[Optional()])
     submit = SubmitField("Submit")

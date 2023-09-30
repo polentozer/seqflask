@@ -6,6 +6,7 @@ from flask import current_app
 
 
 class GlobalVariables:
+    ANALYSIS_WINDOW = 10
     CODONS = [
         "CGA",
         "CGC",

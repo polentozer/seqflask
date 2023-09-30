@@ -195,25 +195,36 @@ class Nucleotide(Sequence):
 
         return Protein(f"{seq_id}|PROT", "".join(translation))
 
-    def recode_sequence(self, replace, table, maximum=False):
+    def recode_sequence(self, table, replace_seqence=None, replace_index=None, maximum=False):
         """Recode a sequence to replace certain sequences using a given codon table."""
-        position = self.sequence.find(replace)
-        if position < 0:
-            return self
-        position -= position % 3
-        for i in range(position, position + (len(replace) // 3 + 1) * 3, 3):
-            codon = self.sequence[i : i + 3]
-            options = table.loc[table.xs(codon, level=1).index[0]]
-            if options.shape[0] == 1:
-                continue
-            if options.shape[0] > 0:
-                new_codon = get_codon(
-                    options, maximum=maximum, recode=True, skip=[codon]
-                )
-                break
-        if "|REC" not in self.sequence_id:
-            self.sequence_id += "|REC"
-        self.sequence = f"{self.sequence[:i]}{new_codon}{self.sequence[i+3:]}"
+        if replace_seqence:
+            position = self.sequence.find(replace_seqence)
+            if position < 0:
+                return self
+            else:
+                position_start = position - (position % 3)
+                position_end = position_start + (len(replace_seqence) // 3 + 1) * 3
+        elif replace_index:
+            position_start = replace_index[0]
+            position_end = replace_index[1]
+        else:
+            raise Exception("Nothing to recode.") 
+
+        for i in range(position_start, position_end, 3):
+            codon = self.sequence[i : i+3]
+            if codon != '':
+                options = table.loc[table.xs(codon, level=1).index[0]]
+                if options.shape[0] == 1:
+                    new_codon = codon
+                elif replace_seqence:
+                    new_codon = str(get_codon(options, maximum=maximum, recode=True, skip=[codon]))
+                elif replace_index:
+                    new_codon = str(get_codon(options, maximum=maximum, recode=True,))
+                
+                self.sequence = f"{self.sequence[:i]}{new_codon}{self.sequence[i+3:]}"
+        else:
+            if "|REC" not in self.sequence_id:
+                    self.sequence_id += "|REC"
 
         return self
 
@@ -223,8 +234,7 @@ class Nucleotide(Sequence):
         for cutsite in renz:
             while cutsite in self.sequence:
                 changes += 1
-                self = self.recode_sequence(cutsite, table=table)
-        print(changes)
+                self = self.recode_sequence(replace_seqence=cutsite, table=table)
         return self
 
     def optimize_codon_usage(self, table, maximum=False):
@@ -243,7 +253,7 @@ class Nucleotide(Sequence):
         self, table, part_type="3t", part_options=GlobalVariables.GGA_PART_TYPES
     ):
         """Make DNA part out of a given sequence"""
-        seq_id = f"part_gge{part_type}_{self.sequence_id}"
+        seq_id = f"part{part_type}_{self.sequence_id}"
         part = part_options[part_type]
         if (
             part_type in ("3", "3a", "3b")
@@ -299,24 +309,14 @@ class Nucleotide(Sequence):
                     return self
 
         return Nucleotide(f"{seq_id}|HARM{mode}", "".join(optimized))
-
-    def plot_codon_usage(
-        self,
-        table,
-        window=16,
-        other=None,
-        other_id=None,
-        table_other=None,
-        minmax=True,
-        target_organism="Yarrowia lipolytica",
-        n=0,
-    ):
-        """Plot codon frequency of a given gene"""
-
-        def data_fraction(self, table=table, window=window):
+    
+    def data_fraction(self, table, window=GlobalVariables.ANALYSIS_WINDOW):
             """Calculates average window codon fraction for a given sequence and codon usage table.
             Returns a list of window-fraction values, which can be used for analysis or ploted."""
-
+            
+            if not self.basic_cds:
+                return
+            
             values, data = [], []
             codons = table.reset_index().set_index(["Triplet"])
 
@@ -327,8 +327,8 @@ class Nucleotide(Sequence):
                 data.append(sum([f for f in values[n : n + window]]) / window)
 
             return data
-
-        def data_minmax(self, table=table, window=window):
+    
+    def data_minmax(self, table, window=GlobalVariables.ANALYSIS_WINDOW):
             """Calculates the %MinMax values for a given sequence and codon usage table.
             Returns a list of %MinMax values, which can be used for analysis or ploted.
 
@@ -336,11 +336,14 @@ class Nucleotide(Sequence):
             Clarke TF IV, Clark PL (2008) Rare Codons Cluster. PLoS ONE 3(10): e3412.
             doi:10.1371/journal.pone.0003412"""
 
+            if not self.basic_cds:
+                return
+
             tri_table = table.reset_index(level="Triplet")
             values, data = [], []
 
             for triplet in self.make_triplets():
-                freq = tri_table[tri_table["Triplet"] == triplet]["Frequency"][0]
+                freq = tri_table[tri_table["Triplet"] == triplet]["Frequency"].iloc[0]
                 codons = table.loc[tri_table[tri_table["Triplet"] == triplet].index[0]]
 
                 values.append(
@@ -368,6 +371,44 @@ class Nucleotide(Sequence):
                     data.append(-mini)
 
             return data
+    
+    def set_minimal_optimization_value(self, table, threshold=20, window=GlobalVariables.ANALYSIS_WINDOW):
+        """Repeatedly looks for a window with the lowest optimization score
+        and recodes the corresponding sequence."""
+        n = 0
+        run = True
+        while run:
+            minmax_values = self.data_minmax(table=table, window=window)
+            if min(minmax_values) < threshold:
+                lowest_window_index = minmax_values.index(min(minmax_values))
+                self = self.recode_sequence(
+                    # replace_sequence=self.sequence[lowest_window_index*3:lowest_window_index*3+(window)*3],
+                    replace_index=(lowest_window_index*3, lowest_window_index*3+(window)*3),
+                    table=table
+                )
+
+                n += 1
+                if n > 100:
+                    run = False
+                    # raise TimeoutError()
+            else:
+                run = False
+
+        return self
+
+
+    def plot_codon_usage(
+        self,
+        table,
+        window=GlobalVariables.ANALYSIS_WINDOW,
+        other=None,
+        other_id=None,
+        table_other=None,
+        minmax=True,
+        target_organism="Yarrowia lipolytica",
+        n=0,
+    ):
+        """Plot codon frequency of a given gene"""
 
         if not self.basic_cds:
             return
@@ -377,23 +418,23 @@ class Nucleotide(Sequence):
                 data = [
                     x
                     for x in zip(
-                        data_minmax(self=self, table=table, window=window),
-                        data_minmax(self=other, table=table_other, window=window),
+                        self.data_minmax(table=table, window=window),
+                        other.data_minmax(table=table_other, window=window),
                     )
                 ]
             else:
                 data = [
                     x
                     for x in zip(
-                        data_fraction(self=self, table=table, window=window),
-                        data_fraction(self=other, table=table_other, window=window),
+                        self.data_fraction(table=table, window=window),
+                        other.data_fraction(table=table_other, window=window),
                     )
                 ]
         else:
             if minmax:
-                data = data_minmax(self=self, table=table, window=window)
+                data = self.data_minmax(table=table, window=window)
             else:
-                data = data_fraction(self=self, table=table, window=window)
+                data = self.data_fraction(table=table, window=window)
 
         x = range(len(data))
         zeros = [0 for i in x]
@@ -424,7 +465,7 @@ class Nucleotide(Sequence):
                     where=[True if y > 0 else False for y in y1],
                     alpha=0.5,
                     interpolate=True,
-                    color="C0",
+                    color="C2",
                 )
                 ax0.fill_between(
                     x,
@@ -433,7 +474,7 @@ class Nucleotide(Sequence):
                     where=[True if y < 0 else False for y in y1],
                     alpha=0.5,
                     interpolate=True,
-                    color="C2",
+                    color="C3",
                 )
                 ax0.set_ylabel("%MinMax Value")
             else:
@@ -462,7 +503,7 @@ class Nucleotide(Sequence):
                     where=[True if y > 0 else False for y in y2],
                     alpha=0.5,
                     interpolate=True,
-                    color="C0",
+                    color="C2",
                 )
                 ax1.fill_between(
                     x,
@@ -471,7 +512,7 @@ class Nucleotide(Sequence):
                     where=[True if y < 0 else False for y in y2],
                     alpha=0.5,
                     interpolate=True,
-                    color="C2",
+                    color="C3",
                 )
                 ax1.set_ylabel("%MinMax Value")
             else:
@@ -500,7 +541,7 @@ class Nucleotide(Sequence):
                     where=[True if y > 0 else False for y in data],
                     alpha=0.5,
                     interpolate=True,
-                    color="C0",
+                    color="C2",
                 )
                 ax.fill_between(
                     x,
@@ -509,7 +550,7 @@ class Nucleotide(Sequence):
                     where=[True if y < 0 else False for y in data],
                     alpha=0.5,
                     interpolate=True,
-                    color="C2",
+                    color="C3",
                 )
                 ax.set_ylabel("%MinMax Value")
             else:

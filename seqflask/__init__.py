@@ -7,6 +7,8 @@ def create_app():
     app = Flask(__name__, instance_relative_config=False)
     app.config.from_object("config.Config")
 
+    print(app.config)
+
     with app.app_context():
         # Include routes
         from seqflask.dna.routes import dna

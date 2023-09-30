@@ -1,4 +1,4 @@
-from seqflask.utils import load_codon_table
+from seqflask.utils import load_codon_table, GlobalVariables
 
 DNA_OPERATIONS = [
     ("translate", "Translate"),
@@ -23,17 +23,29 @@ def dna_operation(list_of_sequences, form):
         if form.plot.data:
             for n, rec in enumerate(list_of_sequences):
                 rec.plot_codon_usage(
-                    window=16,
+                    window=GlobalVariables.ANALYSIS_WINDOW,
                     table=CODON_TABLE,
                     target_organism=target_organism_name,
                     n=n,
                 )
 
     if form.operation.data == "optimize":
-        modified = [
-            single.optimize_codon_usage(table=CODON_TABLE, maximum=form.maximize.data)
-            for single in list_of_sequences
-        ]
+        if form.set_minimal_optimization.data:
+            modified = [
+                single.optimize_codon_usage(
+                    table=CODON_TABLE,
+                    maximum=form.maximize.data
+                ).set_minimal_optimization_value(
+                    table=CODON_TABLE,
+                    threshold=form.minimal_optimization_value.data
+                )
+                for single in list_of_sequences
+            ]
+        else:
+            modified = [
+                single.optimize_codon_usage(table=CODON_TABLE, maximum=form.maximize.data)
+                for single in list_of_sequences
+            ]
         if form.golden_gate.data != "0000":
             modified = [
                 single.remove_cutsites(table=CODON_TABLE) for single in modified
@@ -41,7 +53,7 @@ def dna_operation(list_of_sequences, form):
         if form.plot.data:
             for n, rec in enumerate(zip(list_of_sequences, modified)):
                 rec[1].plot_codon_usage(
-                    window=16,
+                    window=GlobalVariables.ANALYSIS_WINDOW,
                     other=rec[0],
                     table=CODON_TABLE,
                     table_other=CODON_TABLE,
@@ -65,7 +77,6 @@ def dna_operation(list_of_sequences, form):
             single.harmonize(table=CODON_TABLE, source=SOURCE_TABLE, mode=0)
             for single in list_of_sequences
         ]
-
         if form.golden_gate.data != "0000":
             modified = [
                 single.remove_cutsites(table=CODON_TABLE) for single in modified
@@ -73,7 +84,7 @@ def dna_operation(list_of_sequences, form):
         if form.plot.data:
             for n, rec in enumerate(zip(list_of_sequences, modified)):
                 rec[1].plot_codon_usage(
-                    window=16,
+                    window=GlobalVariables.ANALYSIS_WINDOW,
                     other=rec[0],
                     other_id=source_organism_name,
                     table=CODON_TABLE,
@@ -94,7 +105,7 @@ def dna_operation(list_of_sequences, form):
         if form.plot.data:
             for n, rec in enumerate(list_of_sequences):
                 rec.plot_codon_usage(
-                    window=16,
+                    window=GlobalVariables.ANALYSIS_WINDOW,
                     table=CODON_TABLE,
                     target_organism=target_organism_name,
                     n=n,

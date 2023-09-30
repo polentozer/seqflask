@@ -3,7 +3,7 @@ import time
 import requests
 from flask import Blueprint, render_template, url_for, flash, redirect
 from seqflask.modules import Protein
-from seqflask.utils import fasta_parser, load_codon_table, clean_old_plots
+from seqflask.utils import fasta_parser, load_codon_table, clean_old_plots, GlobalVariables
 from seqflask.protein.forms import proteinSequenceForm
 
 
@@ -52,10 +52,22 @@ def protein_page():
         CODON_TABLE = load_codon_table(taxonomy_id=form.target_organism.data)
 
         if form.reverse.data or form.golden_gate.data != "0000":
-            modified = [
-                single.reverse_translate(table=CODON_TABLE, maximum=form.maximize.data)
-                for single in list_of_sequences
-            ]
+            if form.set_minimal_optimization.data:
+                modified = [
+                    single.reverse_translate(
+                        table=CODON_TABLE,
+                        maximum=False
+                    ).set_minimal_optimization_value(
+                        table=CODON_TABLE,
+                        threshold=form.minimal_optimization_value.data
+                    )
+                    for single in list_of_sequences
+                ]
+            else:
+                modified = [
+                    single.reverse_translate(table=CODON_TABLE, maximum=form.maximize.data)
+                    for single in list_of_sequences
+                ]
             if form.golden_gate.data != "0000":
                 modified = [
                     single.remove_cutsites(table=CODON_TABLE) for single in modified
@@ -66,7 +78,7 @@ def protein_page():
                         target_organism_name = target[1]
                 for n, rec in enumerate(modified):
                     rec.plot_codon_usage(
-                        window=16,
+                        window=GlobalVariables.ANALYSIS_WINDOW,
                         table=CODON_TABLE,
                         target_organism=target_organism_name,
                         n=n,

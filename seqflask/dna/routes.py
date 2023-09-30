@@ -39,7 +39,7 @@ def dna_page():
                     if not seq.basic_cds:
                         form.plot.data = False
                         flash(
-                            "One sequence or more is not a CDS. No plotting for you mister!",
+                            "One sequence or more is not a CDS. No plotting for you!",
                             "warning",
                         )
             modified = dna_operation(list_of_sequences=list_of_sequences, form=form)
