@@ -29,7 +29,7 @@ class Sequence:
 
     @property
     def fasta(self):
-        return f">{self.sequence_id}\n\r{self.sequence}\n"
+        return f">{self.sequence_id}\n{self.sequence}\n"
 
     def kmer_analysis(self, threshold, length=8):
         kmers = {}
@@ -336,7 +336,7 @@ class Nucleotide(Sequence):
             Clarke TF IV, Clark PL (2008) Rare Codons Cluster. PLoS ONE 3(10): e3412.
             doi:10.1371/journal.pone.0003412"""
 
-            if not self.basic_cds:
+            if not len(self) % 3 == 0:
                 return
 
             tri_table = table.reset_index(level="Triplet")
@@ -375,24 +375,45 @@ class Nucleotide(Sequence):
     def set_minimal_optimization_value(self, table, threshold=20, window=GlobalVariables.ANALYSIS_WINDOW):
         """Repeatedly looks for a window with the lowest optimization score
         and recodes the corresponding sequence."""
-        n = 0
-        run = True
-        while run:
-            minmax_values = self.data_minmax(table=table, window=window)
-            if min(minmax_values) < threshold:
-                lowest_window_index = minmax_values.index(min(minmax_values))
-                self = self.recode_sequence(
-                    # replace_sequence=self.sequence[lowest_window_index*3:lowest_window_index*3+(window)*3],
-                    replace_index=(lowest_window_index*3, lowest_window_index*3+(window)*3),
-                    table=table
-                )
 
-                n += 1
-                if n > 100:
+        minmax_values = self.data_minmax(table=table, window=window)
+        if minmax_values:
+            n = 0
+            run = True
+            while run:
+                if min(minmax_values) < threshold:
+                    lowest_window_index = minmax_values.index(min(minmax_values))
+                    replace_index = (lowest_window_index*3, (lowest_window_index+window)*3)
+                    self = self.recode_sequence(
+                        replace_index=replace_index,
+                        table=table
+                    )
+                    start_seq_index_for_values = (lowest_window_index - window + 1) * 3
+                    end_seq_index_for_values = (lowest_window_index + window + window - 1) * 3
+                    new_minmax_data_start = lowest_window_index - window + 1
+                    new_minmax_data_end = lowest_window_index + window
+
+                    last_index = len(minmax_values)
+                    if start_seq_index_for_values < 0:
+                        start_seq_index_for_values = 0
+                    if end_seq_index_for_values > last_index * 3:
+                        end_seq_index_for_values = last_index * 3
+                    if new_minmax_data_start < 0:
+                        new_minmax_data_start = 0
+                    if new_minmax_data_end > last_index:
+                        new_minmax_data_end = last_index
+    
+                    minmax_values[new_minmax_data_start:new_minmax_data_end] = Nucleotide(
+                        "temp",
+                        self.sequence[start_seq_index_for_values:end_seq_index_for_values]
+                        ).data_minmax(table=table, window=window)
+
+                    n += 1
+                    if n > 500:
+                        run = False
+                        # raise TimeoutError()
+                else:
                     run = False
-                    # raise TimeoutError()
-            else:
-                run = False
 
         return self
 

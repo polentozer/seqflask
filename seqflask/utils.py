@@ -281,6 +281,11 @@ def clean_old_plots():
         if file.name[-4:] == ".png":
             os.remove(file.path)
 
+def clean_old_fasta():
+    for file in os.scandir(os.path.join(current_app.root_path, "static/temp/")):
+        if file.name[-6:] == ".fasta":
+            os.remove(file.path)
+
 
 def make_plot_path(n):
     return f"{os.path.join(current_app.root_path, f'static/images/plots/plot{n+1}.png')}"

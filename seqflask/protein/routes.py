@@ -1,9 +1,9 @@
 import os
 import time
 import requests
-from flask import Blueprint, render_template, url_for, flash, redirect
+from flask import Blueprint, render_template, url_for, flash, redirect, current_app
 from seqflask.modules import Protein
-from seqflask.utils import fasta_parser, load_codon_table, clean_old_plots, GlobalVariables
+from seqflask.utils import fasta_parser, load_codon_table, clean_old_plots, clean_old_fasta, GlobalVariables
 from seqflask.protein.forms import proteinSequenceForm
 
 
@@ -14,6 +14,7 @@ protein = Blueprint("protein", __name__)
 def protein_page():
     form = proteinSequenceForm()
     clean_old_plots()
+    clean_old_fasta()
     if form.validate_on_submit():
         list_of_sequences = []
         if form.protein_sequence.data:
@@ -95,7 +96,12 @@ def protein_page():
             flash(f"Nothing to do here...", "warning")
             return redirect(url_for("protein.protein_page"))
         elif not modified:
-            flash(f'Select GoldenGate part or "Reverse-Translate"', "warning")
+            flash(f'Select GoldenGate part or check "To DNA"', "warning")
+        
+        elif modified:
+            with open(f"{os.path.join(current_app.root_path,f'static/temp/data.fasta')}", "w") as fasta_file_output:
+                for single in modified:
+                    fasta_file_output.write(single.fasta)
 
         return render_template(
             "protein.html",
