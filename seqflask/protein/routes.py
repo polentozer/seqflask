@@ -52,45 +52,42 @@ def protein_page():
 
         CODON_TABLE = load_codon_table(taxonomy_id=form.target_organism.data)
 
-        if form.reverse.data or form.golden_gate.data != "0000":
-            if form.set_minimal_optimization.data:
-                modified = [
-                    single.reverse_translate(
-                        table=CODON_TABLE,
-                        maximum=False
-                    ).set_minimal_optimization_value(
-                        table=CODON_TABLE,
-                        threshold=form.minimal_optimization_value.data
-                    )
-                    for single in list_of_sequences
-                ]
-            else:
-                modified = [
-                    single.reverse_translate(table=CODON_TABLE, maximum=form.maximize.data)
-                    for single in list_of_sequences
-                ]
-            if form.golden_gate.data != "0000":
-                modified = [
-                    single.remove_cutsites(table=CODON_TABLE) for single in modified
-                ]
-            if form.plot.data:
-                for target in form.target_organism.choices:
-                    if target[0] == form.target_organism.data:
-                        target_organism_name = target[1]
-                for n, rec in enumerate(modified):
-                    rec.plot_codon_usage(
-                        window=GlobalVariables.ANALYSIS_WINDOW,
-                        table=CODON_TABLE,
-                        target_organism=target_organism_name,
-                        n=n,
-                    )
-            if form.golden_gate.data != "0000":
-                modified = [
-                    single.make_part(part_type=form.golden_gate.data, table=CODON_TABLE)
-                    for single in modified
-                ]
+        if form.set_minimal_optimization.data:
+            modified = [
+                single.reverse_translate(
+                    table=CODON_TABLE,
+                    maximum=False
+                ).set_minimal_optimization_value(
+                    table=CODON_TABLE,
+                    threshold=form.minimal_optimization_value.data
+                )
+                for single in list_of_sequences
+            ]
         else:
-            modified = False
+            modified = [
+                single.reverse_translate(table=CODON_TABLE, maximum=form.maximize.data)
+                for single in list_of_sequences
+            ]
+        if form.golden_gate.data != "0000":
+            modified = [
+                single.remove_cutsites(table=CODON_TABLE) for single in modified
+            ]
+        if form.plot.data:
+            for target in form.target_organism.choices:
+                if target[0] == form.target_organism.data:
+                    target_organism_name = target[1]
+            for n, rec in enumerate(modified):
+                rec.plot_codon_usage(
+                    window=GlobalVariables.ANALYSIS_WINDOW,
+                    table=CODON_TABLE,
+                    target_organism=target_organism_name,
+                    n=n,
+                )
+        if form.golden_gate.data != "0000":
+            modified = [
+                single.make_part(part_type=form.golden_gate.data, table=CODON_TABLE)
+                for single in modified
+            ]
 
         if not list_of_sequences or len(list_of_sequences[0]) == 0:
             flash(f"Nothing to do here...", "warning")

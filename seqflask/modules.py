@@ -417,7 +417,6 @@ class Nucleotide(Sequence):
 
         return self
 
-
     def plot_codon_usage(
         self,
         table,

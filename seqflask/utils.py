@@ -269,9 +269,14 @@ class GlobalVariables:
             "info": "Type8b: 5'-homology",
         },
         "X": {
-            "prefix": "GCATCGTCTCATCGGTCTCANNNN",
-            "suffix": "NNNNAGAGACCAGAGACGGCAT",
+            "prefix": "GCATCGTCTCATCGGTCTCAnnnn",
+            "suffix": "nnnnAGAGACCAGAGACGGCAT",
             "info": "TypeX: Custom parts",
+        },
+        "P3RO": {
+            "prefix": "CCACATCACACATACAACCACACACATCCACATATGtCAGGTCTCAT",
+            "suffix": "ATCCAGAGACCTGATCCTAACTCGAGtcatgtaattagttatgtcacgct",
+            "info": "TypeP3RO: Custom part",
         },
     }
 

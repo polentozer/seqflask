@@ -36,7 +36,6 @@ class proteinSequenceForm(FlaskForm):
         default=0,
         validators=[Optional(), NumberRange(min=-50, max=50)],
     )
-    reverse = BooleanField("To DNA", validators=[Optional()])
     maximize = BooleanField("Maximize", validators=[Optional()])
     plot = BooleanField("Draw plots", validators=[Optional()])
     set_minimal_optimization = BooleanField("Set optimization value", validators=[Optional()])
