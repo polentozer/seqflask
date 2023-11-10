@@ -144,6 +144,7 @@ class GlobalVariables:
         ("180454", "*Anopheles gambiae str. PEST (13330)"),
         ("3702", "Arabidopsis thaliana (82082)"),
         ("5580", "Aureobasidium pullulans (13)"),
+        ("354", "Azotobacter vinelandii (78)"),
         ("1471", "Bacillus methanolicus (21)"),
         ("1423", "Bacillus subtilis (2529)"),
         ("302911", "Bifidobacterium animalis subsp. lactis (29)"),
@@ -191,6 +192,8 @@ class GlobalVariables:
         "CGTCTC",   # BsmBI
         "GAGACG",   # BsmBI reverse
         "GCGGCCGC", # NotI
+        "CTCGAG",   # XhoI
+        "CATATG",   # NdeI
     ]
     GGA_PART_TYPES = {
         "1": {
