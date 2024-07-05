@@ -10,7 +10,7 @@ class nucleotideSequenceForm(FlaskForm):
     dna_sequence = StringField(
         "DNA Sequence(s)",
         widget=TextArea(),
-        validators=[DataRequired(), Length(min=10, max=10000)],
+        validators=[DataRequired(), Length(min=10, max=100000)],
     )
     target_organism = SelectField(
         "Select your target organism",

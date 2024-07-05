@@ -29,7 +29,7 @@ def parse_options():
     """
     python spsum_from_cds.py <path-to-fasta-with-genes.fasta> -i <taxid> -n <organism name>
     """
-    parser = argparse.ArgumentParser(description='Generate a frequency file from a CDS fasta file used for the codonharmonizer')
+    parser = argparse.ArgumentParser(description='Generate a frequency file from a CDS fasta file used for the codon harmonizer')
 
     parser.add_argument(dest="fasta_filepath", help="DNA multi-fasta file of protein coding genes", metavar="CDS-FASTA")
     parser.add_argument("-n, --name", dest="tax_name", required=True, help="Name of the organism", metavar="NAME")
