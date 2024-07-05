@@ -1,15 +1,15 @@
-from random import choice
+from random import choices
 from seqflask.utils import GlobalVariables
 
 
 def random_dna(
-    length, homopolymer=10, gc_stretch=20, max_gc_ratio=0.3, restriction=False
+    length, homopolymer=10, gc_percent=35, gc_stretch=20, max_gc_ratio=0.3, restriction=False
 ):
 
     dna = ("A", "C", "G", "T")
 
-    def generate(length, chars=dna):
-        return "".join(choice(chars) for _ in range(length))
+    def generate(length, gc=gc_percent, chars=dna):
+        return "".join(choices(chars, weights=[100-gc, gc, gc, 100-gc], k=length))
 
     def check_restriction(
         sequence, restriction_set=GlobalVariables.RESTRICTION_ENZYMES

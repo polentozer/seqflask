@@ -16,6 +16,7 @@ def generator_page():
                 random_dna(
                     form.sequence_length.data,
                     homopolymer=form.homopolymer.data,
+                    gc_percent=form.gc_percent.data,
                     gc_stretch=form.max_gc_stretch.data,
                     restriction=form.golden_gate.data,
                 ),
