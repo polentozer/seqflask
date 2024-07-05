@@ -9,9 +9,9 @@ ADD . /seqflask-docker
 # run pip to install the dependencies of the app
 RUN pip install -r requirements.txt
 # exposing ports
-ENV HOST 0.0.0.0
+# ENV HOST 0.0.0.0
 EXPOSE 8080
-# EXPOSE 80
-# EXPOSE 443
+EXPOSE 80
+EXPOSE 443
 # define the command to start the container
 CMD ["python", "wsgi.py"]
