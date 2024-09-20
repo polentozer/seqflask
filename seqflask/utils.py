@@ -166,6 +166,7 @@ class GlobalVariables:
         ("44745", "Haematococcus pluvialis (CAUTION: FROM 23 GENES ONLY!!)"),
         ("9606", "Homo sapiens (93487)"),
         ("284590", "Kluyveromyces lactis NRRL Y-1140 (5217)"),
+        ("4922", "Komagataella pastoris (5057)"),
         ("1589", "Lactobacillus pentosus (6)"),
         ("9844", "Lama glama (14)"),
         ("203120", "Leuconostoc mesenteroides subsp. mesenteroides ATCC 8293 (2005)"),
@@ -186,9 +187,18 @@ class GlobalVariables:
         ("431241", "Trichoderma reesei QM6a (8439)"),
         ("7111", "*Trichoplusia ni: (23623)"),
         ("5421", "Xanthophyllomyces dendrorhous (34)"),
-        ("284591", "Yarrowia lipolytica CLIB122 (5967)"),
+        ("284591", "Yarrowia lipolytica CLIB122 (6600)"),
+        ("4952", "Yarrowia lipolytica other (224)"),
         ("263930", "Yponomeuta evonymellus: (222)"),
         ("4577", "*Zea mays: (57651)"),
+        ("1117310", "Fc"),
+        ("1117311", "Fg"),
+        ("44941", "Gr"),
+        ("658196", "Gc"),
+        ("94130", "Rc"),
+        ("588596", "Ri"),
+        ("4874", "Gm"),
+        ("27381", "Fm"),
     ]
     RESTRICTION_ENZYMES = [
         "GGTCTC",   # BsaI
