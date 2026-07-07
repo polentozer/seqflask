@@ -165,11 +165,11 @@ class GlobalVariables:
         ("243230", "Deinococcus radiodurans R1 (3106)"),
         ("121845", "*Diaphorina citri: (22814)"),
         ("37762", "Escherichia coli (8089)"),
+        ("290054", "Eubacterium coprostanoligenes (1656)"),
         ("18101", "Gerbera hybrid cultivar (17)"),
         ("44745", "Haematococcus pluvialis (CAUTION: FROM 23 GENES ONLY!!)"),
         ("29058", "Helicoverpa armigera (24156)"),
         ("7113", "Helicoverpa zea (23833)"),
-
         ("9606", "Homo sapiens (93487)"),
         ("284590", "Kluyveromyces lactis NRRL Y-1140 (5217)"),
         ("4922", "Komagataella pastoris (5057)"),
@@ -352,7 +352,7 @@ def sequence_match(string, search):
     return not bool(search(string))
 
 
-def load_codon_table(taxonomy_id=None, custom=False, return_name=False):
+def load_codon_table(taxonomy_id=None, custom=False, return_name=False, return_ids=False):
     """Load a codon table based on the organism's species ID"""
     if custom:
         handle = os.path.join(current_app.root_path, "data/custom_table.spsum")
@@ -360,32 +360,45 @@ def load_codon_table(taxonomy_id=None, custom=False, return_name=False):
         handle = os.path.join(current_app.root_path, "data/codon_usage.spsum")
 
     with open(handle) as h:
-        for header in h:
-            codon_counts = h.readline()
 
-            taxid, species = header.strip().split(":")[:2]
+        if return_ids:
+            all_tax_ids = []
 
-            if taxonomy_id:
-                taxonomy_id = str(taxonomy_id)
+            for header in h:
+                codon_counts = h.readline()
+                taxid, species = header.strip().split(":")[:2]
+                all_tax_ids.append(taxid)
+            
+            return all_tax_ids
 
-            if taxonomy_id and taxonomy_id != taxid:
-                continue
+        else:
+            for header in h:
+                codon_counts = h.readline()
 
-            table = list(
-                zip(
-                    GlobalVariables.CODONS,
-                    GlobalVariables.STANDARD_GENETIC_CODE,
-                    [int(x) for x in codon_counts.split()],
+                taxid, species = header.strip().split(":")[:2]               
+
+                if taxonomy_id:
+                    taxonomy_id = str(taxonomy_id)
+
+                if taxonomy_id and taxonomy_id != taxid:
+                    continue
+                
+
+                table = list(
+                    zip(
+                        GlobalVariables.CODONS,
+                        GlobalVariables.STANDARD_GENETIC_CODE,
+                        [int(x) for x in codon_counts.split()],
+                    )
                 )
-            )
-            table = DataFrame(table, columns=["Triplet", "AA", "Number"])
-            table.set_index(["AA", "Triplet"], inplace=True)
-            table.sort_index(inplace=True)
-            total = sum(table["Number"])
+                table = DataFrame(table, columns=["Triplet", "AA", "Number"])
+                table.set_index(["AA", "Triplet"], inplace=True)
+                table.sort_index(inplace=True)
+                total = sum(table["Number"])
 
-            table["Fraction"] = table.groupby("AA").transform(lambda x: x / x.sum())
-            table["Frequency"] = table["Number"] / total * 1000
-            break
+                table["Fraction"] = table.groupby("AA").transform(lambda x: x / x.sum())
+                table["Frequency"] = table["Number"] / total * 1000
+                break
 
     if return_name:
         return table, species

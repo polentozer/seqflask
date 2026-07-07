@@ -18,12 +18,24 @@ class nucleotideSequenceForm(FlaskForm):
         default="284591",
         validators=[DataRequired()],
     )
+    # target_organism_taxid = IntegerField(
+    #     "Input taxonomy ID for your target organism",
+    #     choices=GlobalVariables.ORGANISM_CHOICES,
+    #     default="284591",
+    #     validators=[Optional()],
+    # )
     source_organism = SelectField(
         "Select source organism",
         choices=[("0000", "---")] + GlobalVariables.ORGANISM_CHOICES,
         default="0000",
         validators=[Optional()],
     )
+    # source_organism_taxid = IntegerField(
+    #     "Input taxonomy ID for the source organism",
+    #     choices=GlobalVariables.ORGANISM_CHOICES,
+    #     default="0000",
+    #     validators=[Optional()],
+    # )
     operation = RadioField(
         "Select operation", choices=DNA_OPERATIONS, default="optimize"
     )
