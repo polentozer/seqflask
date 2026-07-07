@@ -19,6 +19,7 @@ class proteinSequenceForm(FlaskForm):
         choices=GlobalVariables.ORGANISM_CHOICES,
         default="284591",
         validators=[DataRequired()],
+        validate_choice=False,
     )
     golden_gate = SelectField(
         "Prepare GoldenGate part",

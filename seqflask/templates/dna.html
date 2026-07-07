@@ -30,11 +30,20 @@
       </div>
       <div class="form-group">
         {{ form.target_organism.label(class="form-control-label") }}
-        {{ form.target_organism(class="form-control form-control-sm") }}
+        <select class="form-control form-control-sm select2-ajax" id="target_organism" name="target_organism" required>
+          {% if form.target_organism.data %}
+          <option value="{{ form.target_organism.data }}" selected>{{ organism_lookup.get(form.target_organism.data, form.target_organism.data) }}</option>
+          {% endif %}
+        </select>
       </div>
       <div class="form-group">
         {{ form.source_organism.label(class="form-control-label") }}
-        {{ form.source_organism(class="form-control form-control-sm") }}
+        <select class="form-control form-control-sm select2-ajax" id="source_organism" name="source_organism">
+          <option value="0000" {% if form.source_organism.data == "0000" %}selected{% endif %}>---</option>
+          {% if form.source_organism.data and form.source_organism.data != "0000" %}
+          <option value="{{ form.source_organism.data }}" selected>{{ organism_lookup.get(form.source_organism.data, form.source_organism.data) }}</option>
+          {% endif %}
+        </select>
       </div>
       <div class="form-group">
         {{ form.golden_gate.label(class="form-control-label") }}
@@ -61,3 +70,26 @@
   {% include "output.html" %}
 </div>
 {% endblock content %}
+{% block scripts %}
+<script>
+$('.select2-ajax').select2({
+  theme: 'bootstrap4',
+  placeholder: 'Search for an organism...',
+  allowClear: true,
+  width: '100%',
+  ajax: {
+    url: '/api/organisms',
+    dataType: 'json',
+    delay: 250,
+    data: function(params) {
+      return { q: params.term, page: params.page || 1 };
+    },
+    processResults: function(data) {
+      return { results: data.results, pagination: data.pagination };
+    },
+    cache: true
+  },
+  minimumInputLength: 0
+});
+</script>
+{% endblock scripts %}

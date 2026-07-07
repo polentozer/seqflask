@@ -32,6 +32,16 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 20px;
 }
 
+.content-section a {
+  color: #5f788a;
+  text-decoration: none;
+}
+
+.content-section a:hover {
+  color: #3a5a6a;
+  text-decoration: underline;
+}
+
 .article-title {
   color: #444444;
 }

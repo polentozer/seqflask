@@ -17,12 +17,14 @@ class nucleotideSequenceForm(FlaskForm):
         choices=GlobalVariables.ORGANISM_CHOICES,
         default="284591",
         validators=[DataRequired()],
+        validate_choice=False,
     )
     source_organism = SelectField(
         "Select source organism",
         choices=[("0000", "---")] + GlobalVariables.ORGANISM_CHOICES,
         default="0000",
         validators=[Optional()],
+        validate_choice=False,
     )
     operation = RadioField(
         "Select operation", choices=DNA_OPERATIONS, default="optimize"

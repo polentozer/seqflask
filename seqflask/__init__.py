@@ -14,6 +14,7 @@ def create_app():
         from seqflask.generator.routes import generator
         from seqflask.main.routes import main
         from seqflask.errors.handlers import errors
+        from seqflask.utils import GlobalVariables
 
         # Register blueprints
         app.register_blueprint(dna)
@@ -21,5 +22,10 @@ def create_app():
         app.register_blueprint(generator)
         app.register_blueprint(main)
         app.register_blueprint(errors)
+
+        # Make organism lookup available in all templates
+        @app.context_processor
+        def inject_organism_lookup():
+            return dict(organism_lookup=dict(GlobalVariables.ORGANISM_CHOICES))
 
         return app

@@ -5,6 +5,40 @@ from pandas import DataFrame
 from flask import current_app
 
 
+def load_organism_choices():
+    """Parse codon_usage.spsum and return list of (taxid, display_name) tuples.
+    Display name includes the species name and a human-readable count hint."""
+    path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "data",
+        "codon_usage.spsum",
+    )
+    choices = []
+    seen = set()
+    with open(path) as f:
+        while True:
+            header = f.readline()
+            if not header:
+                break
+            codon_line = f.readline()  # skip the 64 counts
+            header = header.strip()
+            # skip entries without a valid taxid
+            if header.startswith("error:"):
+                continue
+            # rsplit from the right to get the count, then split off taxid
+            before_count, count_str = header.rsplit(":", 1)
+            taxid = before_count.split(":", 1)[0].strip()
+            species = before_count.split(":", 1)[1].strip()
+            count = count_str.strip()
+            label = f"{species} ({count})"
+            key = (taxid, label)
+            if key not in seen:
+                seen.add(key)
+                choices.append(key)
+    choices.sort(key=lambda x: x[1].lower())
+    return choices
+
+
 class GlobalVariables:
     CODONS = [
         "CGA",
@@ -138,51 +172,7 @@ class GlobalVariables:
         "*",
         "*",
     ]
-    ORGANISM_CHOICES = [
-        ("56364", "Agrotis ipsilon: (10)"),
-        ("180454", "*Anopheles gambiae str. PEST (13330)"),
-        ("3702", "Arabidopsis thaliana (82082)"),
-        ("5580", "Aureobasidium pullulans (13)"),
-        ("1471", "Bacillus methanolicus (21)"),
-        ("1423", "Bacillus subtilis (2529)"),
-        ("302911", "Bifidobacterium animalis subsp. lactis (29)"),
-        ("224326", "Borrelia burgdorferi B31 (1639)"),
-        ("9913", "Bos taurus (13374)"),
-        ("5476", "Candida albicans (1148)"),
-        ("3483", "Cannabis sativa: (8)"),
-        ("13429", "Cinnamomum camphora: (5)"),
-        ("431943", "Clostridium kluyveri DSM 555 (3913)"),
-        ("243230", "Deinococcus radiodurans R1 (3106)"),
-        ("121845", "*Diaphorina citri: (22814)"),
-        ("37762", "Escherichia coli (8089)"),
-        ("44745", "Haematococcus pluvialis (CAUTION: FROM 23 GENES ONLY!!)"),
-        ("9606", "Homo sapiens (93487)"),
-        ("284590", "Kluyveromyces lactis NRRL Y-1140 (5217)"),
-        ("1589", "Lactobacillus pentosus (6)"),
-        ("203120", "Leuconostoc mesenteroides subsp. mesenteroides ATCC 8293 (2005)"),
-        ("13632", "*Lucilia sericata: (23715)"),
-        ("1163748", "*Marinobacter hydrocarbonoclasticus (H. nauticus) (3610)"),
-        ("265072", "Methylobacillus flagellatus KT (2753)"),
-        ("29057", "Ostrinia nubilalis: (57)"),
-        ("553", "Pantoea ananatis (9)"),
-        ("5076", "Penicillium chrysogenum (164)"),
-        ("160488", "Pseudomonas putida (6891)"),
-        ("4932", "Saccharomyces cerevisiae (14411)"),
-        ("4932.mitochondrion", "Saccharomyces cerevisiae mitochondrion (89)"),
-        ("4896", "Schizosaccharomyces pombe (6109)"),
-        ("246200", "Silicibacter pomeroyi (4252)"),
-        ("7107", "Spodoptera exigua: (38)"),
-        ("1927", "Streptomyces rimosus (29)"),
-        ("431241", "Trichoderma reesei QM6a (8439)"),
-        ("7111", "*Trichoplusia ni: (23623)"),
-        ("5421", "Xanthophyllomyces dendrorhous (34)"),
-        ("284591", "Yarrowia lipolytica CLIB122 (5967)"),
-        ("263930", "Yponomeuta evonymellus: (222)"),
-        ("4577", "*Zea mays: (57651)"),
-        ("82528", "Crocus sativus (26)"),
-        ("28540", "Buddleja davidii (5)"),
-        ("1148", "Synechoscystis sp. PCC6803 (3623)"),
-    ]
+    ORGANISM_CHOICES = load_organism_choices()
     RESTRICTION_ENZYMES = [
         "GGTCTC",   # BsaI
         "GAGACC",   # BsaI reverse

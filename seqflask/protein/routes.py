@@ -3,7 +3,7 @@ import time
 import requests
 from flask import Blueprint, render_template, url_for, flash, redirect
 from seqflask.modules import Protein
-from seqflask.utils import fasta_parser, load_codon_table, clean_old_plots
+from seqflask.utils import fasta_parser, load_codon_table, clean_old_plots, GlobalVariables
 from seqflask.protein.forms import proteinSequenceForm
 
 
@@ -61,9 +61,8 @@ def protein_page():
                     single.remove_cutsites(table=CODON_TABLE) for single in modified
                 ]
             if form.plot.data:
-                for target in form.target_organism.choices:
-                    if target[0] == form.target_organism.data:
-                        target_organism_name = target[1]
+                organism_lookup = dict(GlobalVariables.ORGANISM_CHOICES)
+                target_organism_name = organism_lookup.get(form.target_organism.data, form.target_organism.data)
                 for n, rec in enumerate(modified):
                     rec.plot_codon_usage(
                         window=16,
